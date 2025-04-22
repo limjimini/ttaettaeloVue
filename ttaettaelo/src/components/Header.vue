@@ -12,7 +12,9 @@
             <span style="color: #FEDE4F;">때</span>
             <span style="color: #F682B3;">로</span>
         </a>
-
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu" aria-controls="navbarMenu" aria-expanded="false" aria-label="Toggle">
+          <span class="navbar-toggler-icon"></span>
+        </button>
         <div class="collapse navbar-collapse" id="navbarMenu">
           <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
             <li class="nav-item dropdown hover-dropdown" ref="dropdown">
