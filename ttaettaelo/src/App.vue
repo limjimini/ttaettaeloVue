@@ -1,11 +1,17 @@
 <template>
-  <Header></Header>
-  <router-view v-slot="{ Component }" class="router">
-    <transition mode="out-in">
-      <component :is="Component" />
-    </transition>
-  </router-view>
-  <Footer></Footer>
+  <div id="app">
+    <Header></Header>
+
+    <main class="main">
+      <router-view v-slot="{ Component }" class="router">
+        <transition mode="out-in">
+          <component :is="Component" />
+        </transition>
+      </router-view>
+    </main>
+
+    <Footer></Footer>
+  </div>
 </template>
 
 <script>
@@ -21,4 +27,14 @@ export default {
 }
 </script>
 
-<style></style>
+<style>
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main {
+  flex: 1;
+}
+</style>
