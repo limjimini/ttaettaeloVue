@@ -1,7 +1,7 @@
 <template>
   <header id="nav">
     <div class="sign-container">
-      <router-link to="/signup" class="text-white">회원가입</router-link>
+      <router-link to="/signUp" class="text-white">회원가입</router-link>
       <router-link to="/login" class="text-white">로그인</router-link>
     </div>
 

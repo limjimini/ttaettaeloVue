@@ -28,7 +28,7 @@
             </section>
         </div>
         <div id="copyright" class="text-center p-3">
-            © 안녕하세요 임지민입니다. 열심히 했어요 o(〃＾▽＾〃)o
+            <!-- © 안녕하세요 임지민입니다. 열심히 했어요 o(〃＾▽＾〃)o -->
         </div>
     </footer>
 </template>
