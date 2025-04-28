@@ -18,7 +18,8 @@ const routes = [
   {
     path: '/signUp',
     name: 'SignUp',
-    component: SignUp
+    component: SignUp,
+    meta: { hideHeaderFooter: true }
   }
 ]
 
