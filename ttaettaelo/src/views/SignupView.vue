@@ -94,11 +94,11 @@ export default {
       axios.post('http://localhost:8081/signUp', memberData)
         .then(response => {
           console.log('회원가입 성공:', response)
-          // 회원가입 성공 후 처리
+          // 회원가입 성공 후 Login.vue로
+          this.$router.push({ name: 'Login' })
         })
         .catch(error => {
           console.error('회원가입 실패:', error.response ? error.response.data : error)
-          // 에러 처리
         })
     },
     checkLoginId () {
