@@ -1,18 +1,10 @@
 <template>
   <header id="nav">
     <div class="sign-container">
-      <!-- <li v-if="!isLoggedIn"> -->
-        <router-link to="/signUp" class="text-white">회원가입</router-link>
-      <!-- </li> -->
-      <!-- <li v-if="!isLoggedIn"> -->
-        <router-link to="/login" class="text-white">로그인</router-link>
-      <!-- </li> -->
-      <!-- <li v-if="isLoggedIn">
-        <router-link to="/mypage" class="text-white">마이페이지</router-link>
-      </li>
-      <li v-if="isLoggedIn">
-        <router-link to="/logout" class="text-white" @click.prevent="logout">로그아웃</router-link>
-      </li> -->
+      <router-link to="/signUp" class="text-white">회원가입</router-link>
+      <router-link to="/login" class="text-white">로그인</router-link>
+      <router-link to="/mypage" class="text-white">마이페이지</router-link>
+      <router-link to="/logout" class="text-white" @click="logout">로그아웃</router-link>
     </div>
 
     <nav class="navbar navbar-expand-lg">
@@ -62,6 +54,8 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   props: {
     isLoggedIn: Boolean
@@ -79,6 +73,23 @@ export default {
         const width = dropdownLink.offsetWidth
         dropdownMenu.style.width = `${width}px`
       }
+    },
+    logout () {
+      // 로그아웃 처리
+      axios.post('http://localhost:8081/logout', {}, { withCredentials: true })
+        .then((response) => {
+          console.log(response.data)
+          if (response.data.success === true) {
+            alert('로그아웃!')
+            // this.$router.push('/login')
+            window.location.href = '/login'
+          } else {
+            alert('실패!')
+          }
+        })
+        .catch(function (error) {
+          console.log(error)
+        })
     }
   }
 }

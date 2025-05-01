@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Header></Header>
+    <Header :isLoggedIn="isLoggedIn" @logout="logout"></Header>
 
     <main class="main">
       <router-view v-slot="{ Component }" class="router">
@@ -24,6 +24,11 @@ export default {
     Header,
     Footer
   },
+  data () {
+    return {
+      isLoggedIn: false
+    }
+  },
   watch: {
     // 라우트의 변경을 감지하여 body 클래스 변경
     '$route' (to) {
@@ -46,6 +51,25 @@ export default {
     }
   },
   methods: {
+    // 로그아웃 처리
+    logout () {
+      this.isLoggedIn = false
+      // 로그아웃 API 호출
+      this.$axios.get('http://localhost:8081/logout')
+        .then(() => {
+          console.log('로그아웃 성공')
+          this.$router.push('/login')
+        })
+        .catch(error => {
+          console.error('로그아웃 오류', error)
+        })
+    },
+    // 로그인 성공 시 호출
+    setLoginStatus (status) {
+      console.log('제발 좀 나타나줘')
+      console.log(status)
+      this.isLoggedIn = status
+    }
   }
 }
 </script>

@@ -24,9 +24,12 @@
           </p>
 
           <div class="input-group mb-3">
-            <input type="text" id="name" class="form-control" v-model="name" placeholder="이름" required>
+            <input type="text" id="name" class="form-control" v-model="name" placeholder="이름" maxlength="6" @input="validateName" required>
           </div>
           <p v-if="!name" class="text-danger">필수 입력입니다.</p>
+          <p v-if="name && name.length > 6" class="text-danger">
+            이름은 최대 6자까지 입력 가능합니다.
+          </p>
 
           <div class="input-group mb-3">
             <input type="email" id="email" class="form-control" v-model="email" placeholder="이메일" required>
@@ -130,6 +133,11 @@ export default {
         this.formatError = '비밀번호는 영문대소문자, 숫자, 특수문자를 사용해주세요.'
       } else {
         this.formatError = ''
+      }
+    },
+    validateName () {
+      if (this.name.length > 6) {
+        this.name = this.name.slice(0, 6)
       }
     },
     openPostcode () {

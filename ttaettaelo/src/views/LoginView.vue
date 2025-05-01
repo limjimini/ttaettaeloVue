@@ -31,7 +31,11 @@ export default {
         password: this.password
       })
         .then(response => {
-          console.log(response.data)
+          console.log('서버: ', response.data)
+
+          // 로그인 성공 후 상위 컴포넌트에 상태 전달
+          this.$emit('setLoginStatus', true)
+          console.log('setLoginStatus 이벤트 발생')
 
           // 로그인 성공 후 Home.vue로
           this.$router.push({ name: 'Home' })
