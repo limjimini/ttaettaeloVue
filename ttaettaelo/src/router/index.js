@@ -6,6 +6,7 @@ import SignUp from '../views/SignupView.vue'
 import Guide from '../views/GuideView.vue'
 import Etiquette from '../views/EtiquetteView.vue'
 import Bathhouse from '../views/BathhouseView.vue'
+import BathhouseDetailed from '../views/BathhouseDetailedView.vue'
 import Support from '../views/SupportView.vue'
 
 const routes = [
@@ -39,6 +40,12 @@ const routes = [
     path: '/bathhouse',
     name: 'Bathhouse',
     component: Bathhouse
+  },
+  {
+    path: '/bathhouse/:bathhouseInfoId',
+    name: 'BathhouseDetailed',
+    component: BathhouseDetailed,
+    props: true
   },
   {
     path: '/support',
