@@ -26,7 +26,13 @@ export default {
   },
   data () {
     return {
-      isLoggedIn: false
+      user: null
+    }
+  },
+  provide () {
+    return {
+      getUser: () => this.user,
+      setUser: (value) => { this.user = value }
     }
   },
   watch: {

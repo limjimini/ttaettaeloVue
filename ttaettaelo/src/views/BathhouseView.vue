@@ -1,10 +1,12 @@
 <template>
     <div class="bathhouse">
+        <input type="text" v-model="searchKeyword" placeholder="이름, 장소 또는 태그로 검색" class="search-input"/>
+        <button @click="search">검색</button>
         <ul>
             <li v-for="bathhouse in currentBathhouses" :key="bathhouse.bathhouseInfoId">
                 <router-link :to="'/bathhouse/' + bathhouse.bathhouseInfoId">{{ bathhouse.name }}</router-link>
-                <pre>{{ bathhouse }}</pre>
-                {{bathhouse.name}}
+                <!-- <pre>{{ bathhouse }}</pre> -->
+                {{ bathhouse.type }}
                 {{ bathhouse.location }}
                 <div>
                   <!-- <img :src="require('@/assets/ttaettaelo.png')" alt="목욕탕 이미지" /> -->
@@ -60,16 +62,21 @@ export default {
   data () {
     return {
       bathhouses: [], // 목욕탕 정보 목록
-      itemsPerPage: 5, // 한 페이지에 표시할 아이템 수
-      currentPage: 1 // 현재 페이지
+      itemsPerPage: 2, // 한 페이지에 표시할 아이템 수
+      currentPage: 1, // 현재 페이지
+      filteredBathhouses: [],
+      searchKeyword: '' // 검색어
     }
   },
   created () {
     this.getAllBathhouseInfo()
   },
+  mounted () {
+    this.filteredBathhouses = this.bathhouses
+  },
   computed: {
     totalPages () {
-      return Math.ceil(this.bathhouses.length / this.itemsPerPage) // 전체 페이지 수
+      return Math.ceil(this.filteredBathhouses.length / this.itemsPerPage) // 전체 페이지 수
     },
     pageNumbers () {
       const pageSize = 5 // 한 번에 보여줄 페이지 버튼 수
@@ -81,11 +88,13 @@ export default {
         { length: endPage - startPage + 1 },
         (_, i) => i + startPage
       ).filter(page => page <= totalPages) // 페이지 번호 배열 생성
+
+      // return Array.from({ length: this.totalPages }, (_, i) => i + 1)
     },
     currentBathhouses () {
       const startIndex = (this.currentPage - 1) * this.itemsPerPage
       const endIndex = startIndex + this.itemsPerPage
-      return this.bathhouses.slice(startIndex, endIndex) // 현재 페이지에 해당하는 축제 목록
+      return this.filteredBathhouses.slice(startIndex, endIndex) // 현재 페이지에 해당하는 축제 목록
     }
   },
   methods: {
@@ -93,6 +102,7 @@ export default {
       try {
         const response = await axios.get('http://localhost:8081/bathhouse')
         this.bathhouses = response.data
+        this.filteredBathhouses = this.bathhouses // 초기화
       } catch (error) {
         console.error('목욕탕 정보를 가져오지 못했습니다.: ', error)
       }
@@ -101,6 +111,18 @@ export default {
       if (pageNumber >= 1 && pageNumber <= this.totalPages) {
         this.currentPage = pageNumber // 페이지 변경
       }
+    },
+    search () {
+      const keyword = this.searchKeyword.toLowerCase()
+      this.filteredBathhouses = this.bathhouses.filter(bathhouse => {
+        return (
+          bathhouse.name?.toLowerCase().includes(keyword) ||
+          bathhouse.location?.toLowerCase().includes(keyword) ||
+          (bathhouse.tags &&
+            bathhouse.tags.some(tag => tag.tagName.toLowerCase().includes(keyword)))
+        )
+      })
+      this.currentPage = 1
     }
   }
 }
@@ -123,5 +145,11 @@ export default {
 }
 .page-item.active .page-link {
   font-weight: bold;
+}
+.search-input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 16px;
+  font-size: 16px;
 }
 </style>

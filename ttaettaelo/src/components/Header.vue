@@ -1,10 +1,10 @@
 <template>
   <header id="nav">
     <div class="sign-container">
-      <router-link to="/signUp" class="text-white">회원가입</router-link>
-      <router-link to="/login" class="text-white">로그인</router-link>
-      <router-link to="/mypage" class="text-white">마이페이지</router-link>
-      <router-link to="/logout" class="text-white" @click="logout">로그아웃</router-link>
+      <router-link v-if="!isLoggedIn" to="/signUp" class="text-white">회원가입</router-link>
+      <router-link v-if="!isLoggedIn" to="/login" class="text-white">로그인</router-link>
+      <router-link v-if="isLoggedIn" to="/mypage" class="text-white">마이페이지</router-link>
+      <router-link v-if="isLoggedIn" to="/logout" class="text-white" @click="logout">로그아웃</router-link>
     </div>
 
     <nav class="navbar navbar-expand-lg">
@@ -57,11 +57,22 @@
 import axios from 'axios'
 
 export default {
-  props: {
-    isLoggedIn: Boolean
+  data () {
+    return {
+      user: null
+    }
+  },
+  computed: {
+    isLoggedIn () {
+      return this.$root.user !== null // 로그인 여부 체크
+    }
   },
   mounted () {
-    this.setDropdownWidth()
+    // 페이지 로드 시 세션 스토리지에서 로그인 상태 체크
+    const storedUser = sessionStorage.getItem('user')
+    if (storedUser) {
+      this.user = JSON.parse(storedUser) // 로그인된 사용자 정보 가져오기
+    }
   },
   methods: {
     setDropdownWidth () {
@@ -74,22 +85,21 @@ export default {
         dropdownMenu.style.width = `${width}px`
       }
     },
-    logout () {
-      // 로그아웃 처리
-      axios.post('http://localhost:8081/logout', {}, { withCredentials: true })
-        .then((response) => {
-          console.log(response.data)
-          if (response.data.success === true) {
-            alert('로그아웃!')
-            // this.$router.push('/login')
-            window.location.href = '/login'
-          } else {
-            alert('실패!')
-          }
-        })
-        .catch(function (error) {
-          console.log(error)
-        })
+    // 로그아웃 요청 함수
+    async logout () {
+      try {
+        // 로그아웃 요청을 서버에 보냄
+        await axios.post('http://localhost:8081/logout', {}, { maxRedirects: 0 })
+
+        // 로그아웃 성공 시 세션 스토리지에서 사용자 정보 삭제
+        sessionStorage.removeItem('user') // 세션 스토리지에서 'user' 삭제
+
+        // 로그아웃 후 추가 작업, 예: 로그인 페이지로 리다이렉트
+        this.$root.user = null // 로컬 상태에서 사용자 정보 삭제
+        this.$router.push('/login') // 로그인 페이지로 리다이렉트
+      } catch (error) {
+        console.error('로그아웃 요청 오류', error)
+      }
     }
   }
 }
