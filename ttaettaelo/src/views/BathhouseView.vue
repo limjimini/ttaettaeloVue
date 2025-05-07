@@ -1,5 +1,5 @@
 <template>
-    <div class="bathhouse">
+  <div class="bathhouse">
         <input type="text" v-model="searchKeyword" placeholder="이름, 장소 또는 태그로 검색" class="search-input"/>
         <button @click="search">검색</button>
         <ul>
@@ -52,7 +52,7 @@
       </ul>
 
     </div>
-    </div>
+  </div>
 </template>
 
 <script>
