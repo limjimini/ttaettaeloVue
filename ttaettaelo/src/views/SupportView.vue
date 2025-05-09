@@ -1,23 +1,25 @@
 <template>
-  <div v-for="support in supportList" :key="support.supportId" class="support-item">
-    <div @click="toggle(support.supportId)" class="support-title">
-      <strong>{{ support.title }}</strong>
-      <span :class="support.status === '답변 완료' ? 'status-done' : 'status-pending'">
-        {{ support.status }}
-      </span>
-    </div>
-
-    <div v-if="openId === support.supportId" class="support-detail">
-      <p><strong>작성자:</strong> {{ support.member.name }}</p>
-      <p><strong>내용:</strong> {{ support.content }}</p>
-      <p><small>작성일: {{ formatDate(support.createdAt) }}</small></p>
-      <hr />
-      <div v-if="support.answer && support.answer.answerId">
-        <p><strong>답변:</strong> {{ support.answer.content }}</p>
-        <p><small>답변일: {{ formatDate(support.answer.createdAt) }}</small></p>
+  <div class="support">
+    <div v-for="support in supportList" :key="support.supportId" class="support-item">
+      <div @click="toggle(support.supportId)" class="support-title">
+        <strong>{{ support.title }}</strong>
+        <span :class="support.status === '답변 완료' ? 'status-done' : 'status-pending'">
+          {{ support.status }}
+        </span>
       </div>
-      <div v-else>
-        <em>아직 답변이 없습니다.</em>
+
+      <div v-if="openId === support.supportId" class="support-detail">
+        <p><strong>작성자:</strong> {{ support.member.name }}</p>
+        <p><strong>내용:</strong> {{ support.content }}</p>
+        <p><small>작성일: {{ formatDate(support.createdAt) }}</small></p>
+        <hr />
+        <div v-if="support.answer && support.answer.answerId">
+          <p><strong>답변:</strong> {{ support.answer.content }}</p>
+          <p><small>답변일: {{ formatDate(support.answer.createdAt) }}</small></p>
+        </div>
+        <div v-else>
+          <em>아직 답변이 없습니다.</em>
+        </div>
       </div>
     </div>
   </div>

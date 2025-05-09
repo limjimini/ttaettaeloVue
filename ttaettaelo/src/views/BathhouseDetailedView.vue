@@ -4,14 +4,12 @@
       <p>{{ bathhouse.introduction }}</p>
       <p>{{ bathhouse.type }}</p>
       <p>{{ bathhouse.location }}</p>
-      <div v-if="bathhouse.businessHours">
-        <p><strong>영업시간:</strong></p>
-        <ul>
-          <li v-for="(value, key) in bathhouse.businessHours" :key="key">
-            {{ key }}: {{ value }}
-          </li>
-        </ul>
-      </div>
+      <p v-if="bathhouse.startTime && bathhouse.endTime">
+        영업시간: {{ bathhouse.startTime }} ~ {{ bathhouse.endTime }}
+      </p>
+      <p v-if="bathhouse.closedDay">
+        <strong>휴무일:</strong> {{ bathhouse.closedDay }}
+      </p>
       <p>{{ bathhouse.contactNumber }}</p>
       <img v-if="bathhouse.imgUrl != null" :src="bathhouse.imgUrl" :alt="이미지" @error="$event.target.src=require('@/assets/ttaettaelo.png')">
       <!-- <img v-else :src="require('@/assets/ttaettaelo.png')" :alt="이미지2"> -->
