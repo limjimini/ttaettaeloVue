@@ -1,5 +1,14 @@
 <template>
   <div class="support">
+    <!-- 문의하기 글 작성 버튼 -->
+    <div class="write-button-container">
+      <router-link to="support/writeSupport">
+        <button @click="toggleWriteForm" class="write-button">
+          문의하기 글 작성
+        </button>
+      </router-link>
+    </div>
+
     <div v-for="support in supportList" :key="support.supportId" class="support-item">
       <div @click="toggle(support.supportId)" class="support-title">
         <strong>{{ support.title }}</strong>

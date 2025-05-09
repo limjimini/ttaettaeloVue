@@ -8,6 +8,7 @@ import Etiquette from '../views/EtiquetteView.vue'
 import Bathhouse from '../views/BathhouseView.vue'
 import BathhouseDetailed from '../views/BathhouseDetailedView.vue'
 import Support from '../views/SupportView.vue'
+import WriteSupport from '../views/WriteSupportView.vue'
 
 const routes = [
   {
@@ -51,6 +52,11 @@ const routes = [
     path: '/support',
     name: 'Support',
     component: Support
+  },
+  {
+    path: '/support/writeSupport',
+    name: WriteSupport,
+    component: WriteSupport
   }
 ]
 
