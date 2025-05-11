@@ -34,6 +34,7 @@
           <div class="input-group mb-3">
             <input type="email" id="email" class="form-control" v-model="email" placeholder="이메일" required>
           </div>
+          <EmailVerification />
           <p v-if="!email" class="text-danger">필수 입력입니다.</p>
 
           <div class="input-group mb-3">
@@ -63,8 +64,12 @@
 
 <script>
 import axios from 'axios'
+import EmailVerification from '@/components/EmailVerification.vue'
 
 export default {
+  components: {
+    EmailVerification
+  },
   name: 'SignupForm',
   data () {
     return {

@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 import Login from '../views/LoginView.vue'
 import SignUp from '../views/SignupView.vue'
+import Mypage from '../views/MypageView.vue'
 import Guide from '../views/GuideView.vue'
 import Etiquette from '../views/EtiquetteView.vue'
 import Bathhouse from '../views/BathhouseView.vue'
@@ -26,6 +27,11 @@ const routes = [
     name: 'SignUp',
     component: SignUp,
     meta: { hideHeaderFooter: true }
+  },
+  {
+    path: '/mypage',
+    name: 'Mypage',
+    component: Mypage
   },
   {
     path: '/guide',

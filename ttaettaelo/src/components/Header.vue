@@ -1,10 +1,11 @@
+<!-- eslint-disable vue/no-dupe-keys -->
 <template>
   <header id="nav">
     <div class="sign-container">
       <router-link v-if="!isLoggedIn" to="/signUp" class="text-white">회원가입</router-link>
       <router-link v-if="!isLoggedIn" to="/login" class="text-white">로그인</router-link>
       <router-link v-if="isLoggedIn" to="/mypage" class="text-white">마이페이지</router-link>
-      <router-link v-if="isLoggedIn" to="/logout" class="text-white" @click="logout">로그아웃</router-link>
+      <router-link v-if="isLoggedIn" to="/home" class="text-white" @click.prevent="logout">로그아웃</router-link>
     </div>
 
     <nav class="navbar navbar-expand-lg">
@@ -64,7 +65,11 @@ export default {
   },
   computed: {
     isLoggedIn () {
-      return this.$root.user !== null // 로그인 여부 체크
+      return this.$store.getters.isLoggedIn
+    },
+    // eslint-disable-next-line vue/no-dupe-keys
+    currentUser () {
+      return this.$store.getters.getUser
     }
   },
   mounted () {
@@ -91,12 +96,8 @@ export default {
         // 로그아웃 요청을 서버에 보냄
         await axios.post('http://localhost:8081/logout', {}, { maxRedirects: 0 })
 
-        // 로그아웃 성공 시 세션 스토리지에서 사용자 정보 삭제
-        sessionStorage.removeItem('user') // 세션 스토리지에서 'user' 삭제
-
-        // 로그아웃 후 추가 작업, 예: 로그인 페이지로 리다이렉트
-        this.$root.user = null // 로컬 상태에서 사용자 정보 삭제
-        this.$router.push('/login') // 로그인 페이지로 리다이렉트
+        this.$store.dispatch('logout')
+        this.$router.push('/login')
       } catch (error) {
         console.error('로그아웃 요청 오류', error)
       }
