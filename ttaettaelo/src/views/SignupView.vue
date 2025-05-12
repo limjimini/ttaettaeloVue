@@ -32,10 +32,11 @@
           </p>
 
           <div class="input-group mb-3">
-            <input type="email" id="email" class="form-control" v-model="email" placeholder="이메일" required>
+            <input type="email" id="email" class="form-control" v-model="email" placeholder="이메일" :disabled="isVerified" required>
           </div>
-          <EmailVerification />
           <p v-if="!email" class="text-danger">필수 입력입니다.</p>
+          <EmailVerification :email="email" @verified="handleVerification" />
+          <p v-if="!isVerified" class="text-danger">이메일 인증을 완료해야 회원가입할 수 있습니다.</p>
 
           <div class="input-group mb-3">
             <input type="text" id="address" class="form-control" v-model="address" placeholder="주소(선택)" readonly>
@@ -57,7 +58,7 @@
             <p v-if="!gender" class="text-danger">필수 선택입니다.</p>
           </div>
 
-          <button type="submit">가입하기</button>
+          <button type="submit" :disabled="!isVerified || !loginId || !password || !passwordCheck || !name || !email || !gender">가입하기</button>
         </form>
     </div>
 </template>
@@ -82,18 +83,25 @@ export default {
       passwordCheck: '',
       name: '',
       email: '',
+      isVerified: false,
       address: '',
       gender: ''
     }
   },
   methods: {
     submitForm () {
+      // if (!this.isVerified || !this.loginId || !this.password || !this.passwordCheck || !this.name || !this.email || !this.gender) {
+      //   alert('모든 필수 정보를 입력하고 이메일 인증을 완료해주세요.')
+      //   return // 여기서 멈추기!
+      // }
+
       const memberData = {
         loginId: this.loginId,
         password: this.password,
         passwordCheck: this.passwordCheck,
         name: this.name,
         email: this.email,
+        isVerified: this.isVerified,
         address: this.address,
         gender: this.gender
       }
@@ -151,6 +159,9 @@ export default {
           this.address = data.address
         }
       }).open()
+    },
+    handleVerification () {
+      this.isVerified = true
     }
   }
 }

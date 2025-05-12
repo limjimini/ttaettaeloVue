@@ -1,6 +1,6 @@
 <template>
   <div class="bathhouse">
-        <input type="text" v-model="searchKeyword" placeholder="이름, 장소 또는 태그로 검색" class="search-input"/>
+        <input type="text" v-model="searchKeyword" @keyup.enter="search" placeholder="이름, 장소 또는 태그로 검색" class="search-input"/>
         <button @click="search">검색</button>
         <ul>
             <li v-for="bathhouse in currentBathhouses" :key="bathhouse.bathhouseInfoId">
@@ -72,7 +72,13 @@ export default {
     this.getAllBathhouseInfo()
   },
   mounted () {
-    this.filteredBathhouses = this.bathhouses
+    const keyword = this.$route.query.keyword
+    if (keyword) {
+      this.searchKeyword = keyword
+      this.search()
+    } else {
+      this.filteredBathhouses = this.bathhouses
+    }
   },
   computed: {
     totalPages () {
@@ -97,6 +103,14 @@ export default {
       return this.filteredBathhouses.slice(startIndex, endIndex) // 현재 페이지에 해당하는 축제 목록
     }
   },
+  watch: {
+    bathhouses (newVal) {
+      if (this.$route.query.keyword && newVal.length > 0) {
+        this.searchKeyword = this.$route.query.keyword
+        this.search()
+      }
+    }
+  },
   methods: {
     async getAllBathhouseInfo () {
       try {
@@ -118,8 +132,9 @@ export default {
         return (
           bathhouse.name?.toLowerCase().includes(keyword) ||
           bathhouse.location?.toLowerCase().includes(keyword) ||
-          (bathhouse.tags &&
-            bathhouse.tags.some(tag => tag.tagName.toLowerCase().includes(keyword)))
+          bathhouse.type?.toLowerCase().includes(keyword) ||
+          (bathhouse.tagKeyword &&
+            bathhouse.tagKeyword.some(tag => tag.tagName.toLowerCase().includes(keyword)))
         )
       })
       this.currentPage = 1

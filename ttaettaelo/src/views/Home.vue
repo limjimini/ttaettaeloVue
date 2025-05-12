@@ -40,8 +40,8 @@
         <!-- 검색창 -->
         <div id="search-home">
           <div class="input-group mb-3">
-            <input type="text" class="form-control form-control-lg" placeholder="검색어를 입력해주세요" aria-label="Search" aria-describedby="search-button">
-            <button class="btn btn-outline-secondary" type="button" id="search-button">
+            <input v-model="searchKeyword" @keyup.enter="goToBathhouseSearch" type="text" class="form-control form-control-lg" placeholder="검색어를 입력해주세요" aria-label="Search" aria-describedby="search-button">
+            <button class="btn btn-outline-secondary" type="button" id="search-button" @click="goToBathhouseSearch">
               <i class="bi bi-search"></i>
             </button>
           </div>
@@ -50,6 +50,15 @@
 </template>
 
 <script>
+export default {
+  methods: {
+    goToBathhouseSearch () {
+      if (this.searchKeyword?.trim()) {
+        this.$router.push({ path: '/bathhouse', query: { keyword: this.searchKeyword } })
+      }
+    }
+  }
+}
 </script>
 
 <style scoped>

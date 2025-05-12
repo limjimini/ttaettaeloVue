@@ -1,13 +1,13 @@
 <template>
   <div class="email-verification">
     <form @submit.prevent="sendVerification">
-      <input type="email" v-model="email" placeholder="이메일 주소" required />
-      <button type="submit">인증번호 보내기</button>
+      <!-- <input type="email" v-model="email" placeholder="이메일 주소" required /> -->
+      <button type="submit" :disabled="isVerified">인증번호 보내기</button>
     </form>
 
     <div v-if="codeSent">
-    <input type="text" v-model="userCode" placeholder="인증번호 입력" />
-      <button @click="checkCode">확인</button>
+      <input type="text" v-model="userCode" placeholder="인증번호 입력" :disabled="isVerified">
+      <button @click.prevent="checkCode" :disabled="isVerified">확인</button>
     </div>
 
     <p v-if="message">{{ message }}</p>
@@ -18,24 +18,31 @@
 import axios from 'axios'
 
 export default {
+  props: {
+    email: {
+      type: String,
+      required: true
+    }
+  },
   data () {
     return {
-      email: '',
       userCode: '',
       message: '',
-      codeSent: false
+      codeSent: false,
+      isVerified: false
     }
   },
   methods: {
     async sendVerification () {
       try {
         console.log('입력된 이메일:', this.email)
+        this.codeSent = true
+        this.message = '인증번호를 이메일로 전송했습니다.'
         const response = await axios.post('http://localhost:8081/mailSend', null, {
           params: { email: this.email }
         })
         if (response.data.success) {
-          this.message = '인증번호를 이메일로 전송했습니다.'
-          this.codeSent = true
+        //   this.message = '인증번호를 이메일로 전송했습니다.'
         } else {
           this.message = '이메일 전송에 실패했습니다.'
         }
@@ -55,6 +62,8 @@ export default {
 
         if (response.data.match) {
           this.message = '인증 성공!'
+          this.isVerified = true
+          this.$emit('verified', this.isVerified)
         } else {
           this.message = '인증번호가 일치하지 않습니다.'
         }

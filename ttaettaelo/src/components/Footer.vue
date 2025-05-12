@@ -1,7 +1,7 @@
 <template>
     <footer class="text-center text-white">
         <div id="footer" class="container">
-            <section>
+            <!-- <section>
                 <ul class="list-group list-group-horizontal" id="sitemap">
                     <li class="list-group-item text-end flex-fill">
                         <router-link to="/guide" class="text-white nav-link">
@@ -19,7 +19,7 @@
                         </router-link>
                     </li>
                 </ul>
-            </section>
+            </section> -->
 
             <section>
                 <p id="contact">
@@ -61,7 +61,7 @@ footer {
 
 #contact {
     font-size: 14px;
-    margin: 16px 0 0 0;
+    margin: 50px 0 0 0;
 }
 
 #copyright {
