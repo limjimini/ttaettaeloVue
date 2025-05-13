@@ -28,14 +28,23 @@
         </button>
       </div>
 
-      <!-- 리뷰 폼 삽입 -->
-      <review-form :bathhouseInfoId="bathhouse.bathhouseInfoId" @review-submitted="fetchReviews" @edit="handleEditReview" @delete="handleDeleteReview"/>
-      <!-- 리뷰 목록 -->
-      <!-- <div v-for="review in reviews" :key="review.reviewId">
-        <p>{{ review.name }}님의 리뷰</p>
-        <p>별점: {{ review.rating }}★</p>
-        <p>{{ review.content }}</p>
-      </div> -->
+      <div class="review-section">
+        <div class="review-wrapper">
+          <!-- 로그인 상태 확인 -->
+          <div v-if="!isLoggedIn" class="blurred-review">
+            <p class="blurred-text">로그인 후 리뷰를 볼 수 있습니다.</p>
+          </div>
+
+          <!-- 리뷰 폼 삽입 -->
+          <review-form class="reviews" :bathhouseInfoId="bathhouse.bathhouseInfoId" @review-submitted="fetchReviews" @edit="handleEditReview" @delete="handleDeleteReview"/>
+          <!-- 리뷰 목록 -->
+          <!-- <div v-for="review in reviews" :key="review.reviewId">
+            <p>{{ review.name }}님의 리뷰</p>
+            <p>별점: {{ review.rating }}★</p>
+            <p>{{ review.content }}</p>
+          </div> -->
+        </div>
+        </div>
   </div>
   <div v-else>
     <p>불러오는 중...</p>
@@ -44,6 +53,7 @@
 
 <script>
 import axios from 'axios'
+import { mapGetters } from 'vuex'
 import ReviewForm from '@/components/review/ReviewForm.vue'
 
 export default {
@@ -58,6 +68,9 @@ export default {
       likeCount: 0,
       like: false
     }
+  },
+  computed: {
+    ...mapGetters(['isLoggedIn'])
   },
   async mounted () {
     await this.getBathhouseDetailed()
@@ -155,5 +168,35 @@ export default {
 <style scoped>
 .bathhouse-detail {
   padding: 20px;
+}
+
+.review-wrapper {
+  position: relative;
+}
+
+.blurred-review {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(5px);
+  background-color: rgba(255, 255, 255, 0.5);
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  pointer-events: none; /* 클릭 막기 원하면 이 줄 제거 */
+}
+.blurred-text {
+  text-align: center;
+  font-size: 1.2em;
+  font-weight: 600;
+  position: relative;
+}
+
+.reviews {
+  margin-top: 20px;
 }
 </style>

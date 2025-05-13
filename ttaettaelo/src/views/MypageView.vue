@@ -6,13 +6,19 @@
 
     <div class="mb-2">
         <label>비밀번호 (변경 시에만 입력)</label>
-        <input v-model="form.password" type="password" class="form-control" />
+        <input v-model="user.password" type="password" class="form-control" @input="validatePassword">
+        <span v-if="lengthError" class="text-danger">{{ lengthError }}</span>
+        <span v-if="formatError" class="text-danger">{{ formatError }}</span>
       </div>
 
       <div class="mb-2">
         <label>비밀번호 확인</label>
-        <input v-model="form.passwordConfirm" type="password" class="form-control" />
+        <input v-model="user.passwordConfirm" type="password" class="form-control" @blur="checkPasswordConfirm"/>
       </div>
+
+      <span v-if="user.password && user.passwordConfirm && user.password !== user.passwordConfirm" class="text-danger">
+        비밀번호가 일치하지 않습니다.
+      </span>
 
       <div class="mb-2">
         <label>이름</label>
@@ -44,7 +50,7 @@
         <button id="postcode" @click="openPostcode">주소 찾기</button>
       </div>
 
-      <button type="submit" class="btn btn-primary mt-3" @click="submitForm" :disabled="emailChanged && !isVerified">정보 수정</button>
+      <button type="submit" class="btn btn-primary mt-3" @click="submitForm" :disabled="!isFormInvalid">정보 수정</button>
     </div>
     <div v-else>
       <p>로그인이 필요합니다.</p>
@@ -72,7 +78,11 @@ export default {
         passwordConfirm: ''
       },
       emailChanged: false,
-      isVerified: false
+      isVerified: true,
+      lengthError: '',
+      formatError: '',
+      passwordConfirmError: '',
+      isFormInvalid: true
     }
   },
   mounted () {
@@ -84,6 +94,8 @@ export default {
       return
     }
 
+    console.log(userData)
+    console.log('memberId:', userData.memberId)
     this.user = userData
 
     // 세션스토리지에 있는 memberId로 사용자 정보 요청
@@ -104,6 +116,9 @@ export default {
       if (this.user.email !== originalEmail) {
         this.emailChanged = true
         this.isVerified = false // 이메일이 변경되었으므로 인증이 안 된 상태로 설정
+      } else {
+        this.emailChanged = false
+        this.isVerified = true // 이메일 인증이 필요 없으므로 기본 true
       }
     },
     handleEmailVerification (isVerified) {
@@ -125,10 +140,27 @@ export default {
         return
       }
 
-      // 이메일 인증 후 정보를 제출할 때 처리
-      axios.post('/updateUser', this.user)
-        .then(res => {
+      if (!this.isFormInvalid) {
+        alert('비밀번호 또는 비밀번호 확인이 유효하지 않습니다.')
+        return
+      }
+
+      // 비밀번호 변경하면
+      const updatedUser = {
+        memberId: this.user.memberId, // 예시로 추가한 memberId, 실제로 필요한 필드 추가
+        loginId: this.user.loginId,
+        name: this.user.name,
+        email: this.user.email,
+        gender: this.user.gender,
+        address: this.user.address,
+        password: this.user.password || null, // 비밀번호가 입력되었으면 업데이트
+        passwordCheck: this.user.passwordConfirm || null // 비밀번호 확인
+      }
+
+      axios.post('/updateMember', updatedUser)
+        .then(response => {
           alert('정보가 성공적으로 업데이트되었습니다!')
+          sessionStorage.setItem('user', JSON.stringify(response.data))
         })
         .catch(err => {
           console.error('정보 업데이트 실패', err)
@@ -137,6 +169,45 @@ export default {
     },
     handleVerification () {
       this.isVerified = true
+    },
+    validatePassword () {
+      if (this.user.password.length < 8 || this.user.password.length > 20) {
+        this.lengthError = '비밀번호는 8~20자로 입력해주세요.'
+      } else {
+        this.lengthError = ''
+      }
+
+      const passwordPattern = /^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\W)(?=\S+$).+$/
+      if (!passwordPattern.test(this.user.password)) {
+        this.formatError = '비밀번호는 영문대소문자, 숫자, 특수문자를 사용해주세요.'
+      } else {
+        this.formatError = ''
+      }
+
+      this.checkFormValidity()
+    },
+    checkPasswordConfirm () {
+      if (this.user.password !== this.user.passwordConfirm) {
+        this.passwordConfirmError = '비밀번호가 일치하지 않습니다.'
+      } else {
+        this.passwordConfirmError = ''
+      }
+
+      this.checkFormValidity()
+    },
+    checkFormValidity () {
+      // 비밀번호, 비밀번호 확인, Validation 상태를 모두 체크
+      if (
+        (this.user.password && !this.user.passwordConfirm) ||
+        (!this.user.password && this.user.passwordConfirm) ||
+        this.user.password !== this.user.passwordConfirm ||
+        this.lengthError ||
+        this.formatError
+      ) {
+        this.isFormInvalid = false // 조건에 맞으면 버튼 비활성화
+      } else {
+        this.isFormInvalid = true // 유효하면 버튼 활성화
+      }
     }
   }
 }

@@ -135,7 +135,7 @@ export default {
         })
     },
     validatePassword () {
-      if (this.password.length <= 8 || this.password.length >= 20) {
+      if (this.password.length < 8 || this.password.length > 20) {
         this.lengthError = '비밀번호는 8~20자로 입력해주세요.'
       } else {
         this.lengthError = ''

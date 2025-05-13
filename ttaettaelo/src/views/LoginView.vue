@@ -1,16 +1,21 @@
 <template>
-    <div class="login">
-        <form @submit.prevent="submitForm">
-        <div>
-            <input type="text" name="loginId" id="loginId" v-model="loginId" placeholder="아이디" required>
-        </div>
-        <div>
-            <input type="password" name="password" id="password" v-model="password" placeholder="비밀번호" required>
-        </div>
+  <div class="login">
+    <form @submit.prevent="submitForm">
+      <div>
+        <input type="text" name="loginId" id="loginId" v-model="loginId" placeholder="아이디" required>
+      </div>
+      <div>
+        <input type="password" name="password" id="password" v-model="password" placeholder="비밀번호" required>
+      </div>
         <button type="submit">로그인</button>
     </form>
     <p v-if="errorMessage" class="text-danger">{{ errorMessage }}</p>
+
+    <div class="help-login">
+      <router-link to="/findId">아이디 찾기</router-link> |
+      <router-link to="/findPassword">비밀번호 찾기</router-link>
     </div>
+  </div>
 </template>
 
 <script>
