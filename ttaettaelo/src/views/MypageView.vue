@@ -54,6 +54,30 @@
 
       <button type="submit" class="btn btn-primary mt-3" @click="submitForm" :disabled="!isFormValid">정보 수정</button>
       <!-- <button type="submit" class="btn btn-primary mt-3" @click="submitForm" :disabled="!isFormInvalid">정보 수정</button> -->
+
+      <div class="liked-posts">
+        <h3>내가 좋아요한 게시글</h3>
+        <div v-if="likedPosts.length === 0">좋아요한 게시글이 없습니다.</div>
+        <div v-else>
+          <ul>
+            <li v-for="post in likedPosts" :key="post.bathhouseInfoId">
+              <h4>{{ post.name }}</h4>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="my-reviews">
+        <h3>내가 쓴 댓글</h3>
+        <div v-if="myReviews.length === 0">내가 쓴 댓글이 없습니다.</div>
+        <div v-else>
+          <ul>
+            <li v-for="review in myReviews" :key="review.reviewId">
+              <h4>{{ review.rating }}점</h4> <h4>{{ review.content }}</h4> - {{ review.name }}
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
     <div v-else>
       <p>로그인이 필요합니다.</p>
@@ -82,7 +106,9 @@ export default {
       },
       emailChanged: false,
       isVerified: true,
-      nameNull: false
+      nameNull: false,
+      likedPosts: [],
+      myReviews: []
       // lengthError: '',
       // formatError: '',
       // passwordConfirmError: '',
@@ -101,6 +127,8 @@ export default {
     console.log(userData)
     console.log('memberId:', userData.memberId)
     this.user = userData
+    this.fetchLikedPosts()
+    this.fetchMyReviews()
 
     // // 세션스토리지에 있는 memberId로 사용자 정보 요청
     // axios.post('/mypage', { memberId: userData.memberId })
@@ -238,6 +266,30 @@ export default {
     validateForm () {
       // 빈 값
       this.isFormValid = this.user.name && !this.nameNull && this.user.email && this.user.gender && this.isVerified
+    },
+    async fetchLikedPosts () {
+      try {
+        const response = await axios.get('/likedBathhouse', {
+          params: {
+            memberId: this.user.memberId
+          }
+        })
+        this.likedPosts = response.data
+      } catch (error) {
+        console.error('좋아요한 게시글을 불러오지 못했습니다.', error)
+      }
+    },
+    async fetchMyReviews () {
+      try {
+        const response = await axios.get('/myReviews', {
+          params: {
+            memberId: this.user.memberId
+          }
+        })
+        this.myReviews = response.data
+      } catch (error) {
+        console.error('내가 쓴 댓글을 불러오지 못했습니다.', error)
+      }
     }
     // validatePassword () {
     //   if (this.user.password.length < 8 || this.user.password.length > 20) {

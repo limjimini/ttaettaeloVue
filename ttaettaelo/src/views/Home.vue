@@ -2,20 +2,8 @@
     <div class="home">
         <div id="home-carousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-pause="false">
           <div class="carousel-inner">
-            <div class="carousel-item active" data-bs-interval="5000">
-              <img src="https://picsum.photos/1024/480/?image=22" class="d-block w-100 carousel-img" alt="조회수1">
-            </div>
-            <div class="carousel-item" data-bs-interval="5000">
-              <img src="https://picsum.photos/1024/480/?image=10" class="d-block w-100 carousel-img" alt="조회수2">
-            </div>
-            <div class="carousel-item" data-bs-interval="5000">
-              <img src="https://picsum.photos/1024/480/?image=58" class="d-block w-100 carousel-img" alt="조회수3">
-            </div>
-            <div class="carousel-item" data-bs-interval="5000">
-              <img src="https://picsum.photos/1024/480/?image=54" class="d-block w-100 carousel-img" alt="조회수4">
-            </div>
-            <div class="carousel-item" data-bs-interval="5000">
-              <img src="https://picsum.photos/1024/480/?image=52" class="d-block w-100 carousel-img" alt="조회수5">
+            <div v-for="(image, index) in images" :key="index" class="carousel-item" :class="{'active': index === 0}">
+              <img :src="image" class="d-block w-100 carousel-img" alt="이미지">
             </div>
           </div>
 
@@ -29,11 +17,12 @@
           </button>
 
           <div class="carousel-indicators">
-            <button type="button" data-bs-target="#home-carousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="이미지1"></button>
-            <button type="button" data-bs-target="#home-carousel" data-bs-slide-to="1" aria-label="이미지2"></button>
-            <button type="button" data-bs-target="#home-carousel" data-bs-slide-to="2" aria-label="이미지3"></button>
-            <button type="button" data-bs-target="#home-carousel" data-bs-slide-to="3" aria-label="이미지4"></button>
-            <button type="button" data-bs-target="#home-carousel" data-bs-slide-to="4" aria-label="이미지5"></button>
+            <button v-for="(image, index) in images" :key="index"
+              :data-bs-target="'#home-carousel'"
+              :data-bs-slide-to="index"
+              :class="{'active': index === 0}"
+              :aria-label="'이미지 ' + (index + 1)">
+            </button>
           </div>
         </div>
 
@@ -50,11 +39,29 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
+  data () {
+    return {
+      images: [] // 랜덤 이미지 리리스트
+    }
+  },
+  created () {
+    this.fetchImages()
+  },
   methods: {
     goToBathhouseSearch () {
       if (this.searchKeyword?.trim()) {
         this.$router.push({ path: '/bathhouse', query: { keyword: this.searchKeyword } })
+      }
+    },
+    async fetchImages () {
+      try {
+        const response = await axios.get('/randomImages')
+        this.images = response.data
+      } catch (error) {
+        console.error('내가 쓴 댓글을 불러오지 못했습니다.', error)
       }
     }
   }
