@@ -4,8 +4,8 @@
     <div v-if="user">
       <p><strong>아이디:</strong> {{ user.loginId }}</p>
 
-      <!-- <div class="mb-2">
-        <label>비밀번호 (변경 시에만 입력)</label>
+      <div class="mb-2">
+        <label>비밀번호</label>
         <input v-model="user.password" type="password" class="form-control" @input="validatePassword">
         <span v-if="lengthError" class="text-danger">{{ lengthError }}</span>
         <span v-if="formatError" class="text-danger">{{ formatError }}</span>
@@ -13,12 +13,14 @@
 
       <div class="mb-2">
         <label>비밀번호 확인</label>
-        <input v-model="user.passwordConfirm" type="password" class="form-control" @blur="checkPasswordConfirm"/>
+        <input v-model="user.passwordCheck" type="password" class="form-control" @blur="checkPasswordCheck"/>
       </div>
 
-      <span v-if="user.password && user.passwordConfirm && user.password !== user.passwordConfirm" class="text-danger">
+      <span v-if="user.password && user.passwordCheck && user.password !== user.passwordCheck" class="text-danger">
         비밀번호가 일치하지 않습니다.
-      </span> -->
+      </span>
+
+      <button v-if="canChangePassword" class="btn btn-warning mt-2" @click="changePassword">비밀번호 변경</button>
 
       <div class="mb-2">
         <label>이름</label>
@@ -100,18 +102,18 @@ export default {
         name: '',
         email: '',
         gender: '',
-        address: ''
-        // password: '',
-        // passwordConfirm: ''
+        address: '',
+        password: '',
+        passwordCheck: ''
       },
       emailChanged: false,
       isVerified: true,
       nameNull: false,
       likedPosts: [],
-      myReviews: []
-      // lengthError: '',
-      // formatError: '',
-      // passwordConfirmError: '',
+      myReviews: [],
+      lengthError: '',
+      formatError: '',
+      passwordCheckError: ''
       // isFormInvalid: true
     }
   },
@@ -140,6 +142,18 @@ export default {
     //     console.error('회원 정보 조회 실패', err)
     //     alert('정보를 불러오지 못했습니다.')
     //   })
+  },
+  computed: {
+    canChangePassword () {
+      return (
+        this.user &&
+        this.user.password &&
+        this.user.passwordCheck &&
+        this.user.password === this.user.passwordCheck &&
+        !this.lengthError &&
+        !this.formatError
+      )
+    }
   },
   watch: {
     // 사용자 정보 변경 시 폼 유효성 체크 (예시)
@@ -224,7 +238,7 @@ export default {
       //   gender: this.user.gender,
       //   address: this.user.address,
       //   password: this.user.password || null, // 비밀번호가 입력되었으면 업데이트
-      //   passwordCheck: this.user.passwordConfirm || null // 비밀번호 확인
+      //   passwordCheck: this.user.passwordCheck || null // 비밀번호 확인
       // }
 
       // 요청을 보내기 전에 데이터가 정상인지 로그로 확인
@@ -290,38 +304,59 @@ export default {
       } catch (error) {
         console.error('내가 쓴 댓글을 불러오지 못했습니다.', error)
       }
+    },
+    validatePassword () {
+      if (this.user.password.length < 8 || this.user.password.length > 20) {
+        this.lengthError = '비밀번호는 8~20자로 입력해주세요.'
+      } else {
+        this.lengthError = ''
+      }
+
+      const passwordPattern = /^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\W)(?=\S+$).+$/
+      if (!passwordPattern.test(this.user.password)) {
+        this.formatError = '비밀번호는 영문대소문자, 숫자, 특수문자를 사용해주세요.'
+      } else {
+        this.formatError = ''
+      }
+
+      // this.checkFormValidity()
+    },
+    checkPasswordCheck () {
+      if (this.user.password !== this.user.passwordCheck) {
+        this.passwordCheckError = '비밀번호가 일치하지 않습니다.'
+      } else {
+        this.passwordCheckError = ''
+      }
+
+      // this.checkFormValidity()
+
+      // this.checkPasswordChangeConditions()
+    },
+    async changePassword () {
+      try {
+        const response = await axios.put('/changePassword', {
+          loginId: this.user.loginId,
+          newPassword: this.user.password
+        })
+        if (response.data.success) {
+          alert('비밀번호가 변경되었습니다.')
+          // 비밀번호 초기화
+          this.user.password = ''
+          this.user.passwordCheck = ''
+        } else {
+          alert('비밀번호 변경에 실패했습니다.')
+        }
+      } catch (err) {
+        console.error(err)
+        alert('서버 오류로 비밀번호 변경에 실패했습니다.')
+      }
     }
-    // validatePassword () {
-    //   if (this.user.password.length < 8 || this.user.password.length > 20) {
-    //     this.lengthError = '비밀번호는 8~20자로 입력해주세요.'
-    //   } else {
-    //     this.lengthError = ''
-    //   }
-
-    //   const passwordPattern = /^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\W)(?=\S+$).+$/
-    //   if (!passwordPattern.test(this.user.password)) {
-    //     this.formatError = '비밀번호는 영문대소문자, 숫자, 특수문자를 사용해주세요.'
-    //   } else {
-    //     this.formatError = ''
-    //   }
-
-    //   this.checkFormValidity()
-    // },
-    // checkPasswordConfirm () {
-    //   if (this.user.password !== this.user.passwordConfirm) {
-    //     this.passwordConfirmError = '비밀번호가 일치하지 않습니다.'
-    //   } else {
-    //     this.passwordConfirmError = ''
-    //   }
-
-    //   this.checkFormValidity()
-    // },
     // checkFormValidity () {
     //   // 비밀번호, 비밀번호 확인, Validation 상태를 모두 체크
     //   if (
-    //     (this.user.password && !this.user.passwordConfirm) ||
-    //     (!this.user.password && this.user.passwordConfirm) ||
-    //     this.user.password !== this.user.passwordConfirm ||
+    //     (this.user.password && !this.user.passwordCheck) ||
+    //     (!this.user.password && this.user.passwordCheck) ||
+    //     this.user.password !== this.user.passwordCheck ||
     //     this.lengthError ||
     //     this.formatError
     //   ) {
