@@ -21,17 +21,17 @@
         <div class="collapse navbar-collapse" id="navbarMenu">
           <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
             <li class="nav-item dropdown hover-dropdown" ref="dropdown">
-              <router-link to="/guide" class="text-white nav-link" aria-expanded="false">
+              <router-link to="/benefits" class="text-white nav-link" aria-expanded="false">
                 목욕탕 가이드
               </router-link>
               <ul class="dropdown-menu" ref="item">
                 <li>
-                  <router-link to="/guide" class="dropdown-item text-white">
+                  <router-link to="/benefits" class="dropdown-item text-white">
                     목욕탕 효능
                   </router-link>
                 </li>
                 <li>
-                  <router-link to="/guide/etiquette" class="dropdown-item text-white rounded-bottom">
+                  <router-link to="/benefits/etiquette" class="dropdown-item text-white rounded-bottom">
                     목욕탕 예절
                   </router-link>
                 </li>

@@ -6,7 +6,7 @@ import FindId from '../views/FindIdView.vue'
 import FindPassword from '../views/FindPasswordView.vue'
 import SignUp from '../views/SignupView.vue'
 import Mypage from '../views/MypageView.vue'
-import Guide from '../views/GuideView.vue'
+import Benefits from '../views/BenefitsView.vue'
 import Etiquette from '../views/EtiquetteView.vue'
 import Bathhouse from '../views/BathhouseView.vue'
 import BathhouseDetailed from '../views/BathhouseDetailedView.vue'
@@ -27,12 +27,12 @@ const routes = [
   {
     path: '/findId',
     name: 'FindId',
-    compoent: FindId
+    component: FindId
   },
   {
     path: '/findPassword',
     name: 'FindPassword',
-    compoent: FindPassword
+    component: FindPassword
   },
   {
     path: '/signUp',
@@ -46,12 +46,12 @@ const routes = [
     component: Mypage
   },
   {
-    path: '/guide',
-    name: 'Guide',
-    component: Guide
+    path: '/benefits',
+    name: 'Benefits',
+    component: Benefits
   },
   {
-    path: '/guide/etiquette',
+    path: '/benefits/etiquette',
     name: 'Etiquette',
     component: Etiquette
   },
