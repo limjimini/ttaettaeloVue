@@ -97,7 +97,7 @@ export default {
         await axios.post('http://localhost:8081/logout', {}, { maxRedirects: 0 })
 
         this.$store.dispatch('logout')
-        this.$router.push('/login')
+        this.$router.push({ name: 'Home' })
       } catch (error) {
         console.error('로그아웃 요청 오류', error)
       }

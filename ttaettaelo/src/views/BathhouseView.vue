@@ -8,6 +8,9 @@
                 <!-- <pre>{{ bathhouse }}</pre> -->
                 {{ bathhouse.type }}
                 {{ bathhouse.location }}
+                <p>리뷰 수: {{ bathhouse.reviewCount }}</p>
+                <p>평점: {{ bathhouse.avgRating }}</p>
+                <p>좋아요 수: {{ bathhouse.likeCount }}</p>
                 <div>
                   <!-- <img :src="require('@/assets/ttaettaelo.png')" alt="목욕탕 이미지" /> -->
                   <!-- <img :src="require('@/assets/' + bathhouse.imgUrl)" alt="목욕탕 이미지" /> -->

@@ -63,7 +63,9 @@
         <div v-else>
           <ul>
             <li v-for="post in likedPosts" :key="post.bathhouseInfoId">
-              <h4>{{ post.name }}</h4>
+              <router-link :to="{name: 'BathhouseDetailed', params: {bathhouseInfoId: post.bathhouseInfoId}}">
+                <h4>{{ post.name }}</h4>
+              </router-link>
             </li>
           </ul>
         </div>
@@ -75,9 +77,48 @@
         <div v-else>
           <ul>
             <li v-for="review in myReviews" :key="review.reviewId">
-              <h4>{{ review.rating }}점</h4> <h4>{{ review.content }}</h4> - {{ review.name }}
+              <router-link :to="{name: 'BathhouseDetailed', params: {bathhouseInfoId: review.bathhouseInfoId}}">
+                <h4>{{ review.rating }}점</h4> <h4>{{ review.content }}</h4> - {{ review.name }}
+              </router-link>
             </li>
           </ul>
+        </div>
+      </div>
+
+      <!-- <button class="btn btn-danger mt-3" @click="openDeleteAccountModal">회원 탈퇴</button>
+      <div v-if="isModalVisible" class="modal-overlay">
+        <div class="modal">
+          <h3>정말 탈퇴하시겠습니까?</h3>
+          <p>이 문구를 똑같이 따라 쓰고 확인을 누르면 탈퇴됩니다.</p>
+          <div class="confirmation">
+            <input v-model="deleteConfirmationText" type="text" placeholder="정말 탈퇴하시겠습니까?" />
+            <p v-if="deleteConfirmationText !== '정말 탈퇴하시겠습니까?'" class="text-danger">문구를 정확히 입력해주세요.</p>
+          </div>
+          <div class="modal-actions">
+            <button @click="confirmDelete" :disabled="deleteConfirmationText !== '정말 탈퇴하시겠습니까?'">확인</button>
+            <button @click="closeModal">취소</button>
+          </div>
+        </div>
+      </div> -->
+
+      <div>
+        <button @click="openModal">회원 탈퇴</button>
+
+        <!-- 모달 창 -->
+        <div v-if="isModalVisible2" class="modal-overlay" @click.self="closeModal">
+          <div class="modal-content">
+            <h2>정말 탈퇴하시겠습니까?</h2>
+            <p>탈퇴하시기 위해 아래 문구를 따라 적어주세요.</p>
+            <p>{{ user.name }} 탈퇴합니다.</p>
+
+            <input type="text" v-model="confirmationText" placeholder="탈퇴 문구를 적어주세요" />
+
+            <div class="error-message" v-if="isError">
+              문구가 틀렸습니다. 정확히 입력해주세요.
+            </div>
+            <button @click="confirmDeletion">확인</button>
+            <button @click="closeModal">취소</button>
+          </div>
         </div>
       </div>
     </div>
@@ -113,7 +154,13 @@ export default {
       myReviews: [],
       lengthError: '',
       formatError: '',
-      passwordCheckError: ''
+      passwordCheckError: '',
+      // isModalVisible: false, // 모달의 표시 여부
+      isModalVisible2: false,
+      confirmationText: '',
+      isError: false,
+      deleteConfirmationText: '', // 입력된 텍스트
+      nameLengthError: ''
       // isFormInvalid: true
     }
   },
@@ -350,7 +397,7 @@ export default {
         console.error(err)
         alert('서버 오류로 비밀번호 변경에 실패했습니다.')
       }
-    }
+    },
     // checkFormValidity () {
     //   // 비밀번호, 비밀번호 확인, Validation 상태를 모두 체크
     //   if (
@@ -365,6 +412,57 @@ export default {
     //     this.isFormInvalid = true // 유효하면 버튼 활성화
     //   }
     // }
+    // openDeleteAccountModal () {
+    //   console.log('모달을 여는 중')
+    //   this.isModalVisible = true
+    // },
+    // closeModal () {
+    //   this.isModalVisible = false
+    //   this.deleteConfirmationText = ''
+    // },
+    // confirmDelete () {
+    //   if (this.deleteConfirmationText === '정말 탈퇴하시겠습니까?') {
+    //     this.deleteAccount()
+    //   }
+    // },
+    async deleteAccount () {
+      try {
+        const response = await axios.post('/deleteAccount', {
+          memberId: this.user.memberId
+        })
+
+        if (response.data.success) {
+          alert(`${this.user.name}님의 계정이 탈퇴되었습니다.`)
+          this.$store.dispatch('logout')
+          this.$router.push({ name: 'Home' }) // 홈 화면으로
+          // 세션 스토리지에서 정보 제거
+          // sessionStorage.removeItem('user')
+        } else {
+          alert('탈퇴 처리 중 오류가 발생했습니다.')
+        }
+      } catch (err) {
+        console.error('탈퇴 실패:', err)
+        alert('서버 오류로 탈퇴를 처리할 수 없습니다.')
+      }
+    },
+    openModal () {
+      this.isModalVisible2 = true
+    },
+    closeModal () {
+      this.isModalVisible2 = false
+      this.isError = false
+      this.confirmationText = ''
+    },
+    confirmDeletion () {
+      const expectedText = `${this.user.name} 탈퇴합니다.`
+      if (this.confirmationText === expectedText) {
+        alert('탈퇴가 확인되었습니다.')
+        this.deleteAccount()
+        // this.closeModal()
+      } else {
+        this.isError = true
+      }
+    }
   }
 }
 </script>
@@ -374,4 +472,83 @@ export default {
   max-width: 600px;
   margin: 0 auto;
 }
+.btn-danger {
+  background-color: red;
+  color: white;
+}
+/* .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+} */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  position: relative;
+  max-width: 400px;
+  width: 100%;
+}
+
+button {
+  padding: 10px 20px;
+  margin-top: 20px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+input {
+  padding: 10px;
+  margin-top: 10px;
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  }
+
+.error-message {
+  color: red;
+  margin-top: 10px;
+}
+/* 모달 스타일 */
+/* .modal {
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+} */
+
+/* 버튼 스타일 */
+/* .modal-actions button {
+  margin: 10px;
+} */
+
+/* .text-danger {
+  color: red;
+} */
 </style>

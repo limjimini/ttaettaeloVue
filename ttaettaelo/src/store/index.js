@@ -4,7 +4,7 @@ const storedUser = JSON.parse(sessionStorage.getItem('user'))
 
 export default createStore({
   state: {
-    user: storedUser || null // 로그인한 사용자 정보 저장장
+    user: storedUser || null // 로그인한 사용자 정보 저장
   },
   getters: {
     isLoggedIn: state => !!state.user, // 로그인 상태 확인
@@ -30,6 +30,8 @@ export default createStore({
     },
     logout ({ commit }) {
       commit('clearUser')
+
+      sessionStorage.removeItem('user')
     }
   },
   modules: {
