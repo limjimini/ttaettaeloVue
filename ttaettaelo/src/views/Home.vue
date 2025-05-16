@@ -1,16 +1,24 @@
 <template>
     <div class="home">
+      <!-- 이미지 캐러셀 -->
         <div id="home-carousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-pause="false">
           <div class="carousel-inner">
-            <div v-for="(image, index) in images" :key="index" class="carousel-item" :class="{'active': index === 0}">
-              <img :src="image" class="d-block w-100 carousel-img" alt="이미지">
+            <!-- 이미지 출력 -->
+            <div v-for="(image, index) in images"
+              :key="index" class="carousel-item"
+              :class="{'active': index === 0}"
+            >
+              <img :src="image" class="d-block w-100 carousel-img" alt="목욕탕">
             </div>
           </div>
 
+          <!-- 이전 버튼 -->
           <button class="carousel-control-prev" type="button" data-bs-target="#home-carousel" data-bs-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Previous</span>
           </button>
+
+          <!-- 다음 버튼 -->
           <button class="carousel-control-next" type="button" data-bs-target="#home-carousel" data-bs-slide="next">
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Next</span>
@@ -76,7 +84,6 @@ export default {
   justify-content: flex-start;
   padding: 0;
   margin: 0;
-
   position: relative;
 }
 
@@ -85,8 +92,9 @@ export default {
   height: 80vh;
   object-fit: cover;
   margin: 0;
-  padding: 0;
+  padding: 0 auto;
   display: block;
+  object-position: center center;
 }
 
 /* 태블릿*/

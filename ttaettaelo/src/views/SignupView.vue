@@ -58,7 +58,7 @@
             <p v-if="!gender" class="text-danger">필수 선택입니다.</p>
           </div>
 
-          <button type="submit" :disabled="!isVerified || !loginId || !password || !passwordCheck || !name || !email || !gender">가입하기</button>
+          <button type="submit" :disabled="!isVerified || !loginId || !password || !passwordCheck || !name || !email || !gender || !isAvailable">가입하기</button>
         </form>
     </div>
 </template>

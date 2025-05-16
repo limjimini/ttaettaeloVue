@@ -4,7 +4,7 @@
     <div class="sign-container">
       <router-link v-if="!isLoggedIn" to="/signUp" class="text-white">회원가입</router-link>
       <router-link v-if="!isLoggedIn" to="/login" class="text-white">로그인</router-link>
-      <router-link v-if="isLoggedIn" to="/mypage" class="text-white">마이페이지</router-link>
+      <router-link v-if="isLoggedIn" to="/mypage" class="text-white" @click="goToPage">마이페이지</router-link>
       <router-link v-if="isLoggedIn" to="/home" class="text-white" @click.prevent="logout">로그아웃</router-link>
     </div>
 
@@ -100,6 +100,11 @@ export default {
         this.$router.push({ name: 'Home' })
       } catch (error) {
         console.error('로그아웃 요청 오류', error)
+      }
+    },
+    goToPage () {
+      if (this.$route.path === '/mypage') {
+        this.$router.go(0)
       }
     }
   }

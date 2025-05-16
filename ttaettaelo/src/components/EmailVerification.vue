@@ -56,7 +56,7 @@ export default {
         const response = await axios.get('http://localhost:8081/mailCheck', {
           params: {
             email: this.email,
-            userNumber: this.userCode
+            memberNumber: this.userCode
           }
         })
 

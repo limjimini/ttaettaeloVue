@@ -298,7 +298,7 @@ export default {
       // })
 
       try {
-        const response = await axios.put('/updateMember', {
+        const response = await axios.put('/changeMember', {
           memberId: this.user.memberId,
           loginId: this.user.loginId,
           name: this.user.name,
@@ -323,6 +323,7 @@ export default {
     },
     handleVerification () {
       this.isVerified = true
+      this.validateForm()
     },
     validateForm () {
       // 빈 값
