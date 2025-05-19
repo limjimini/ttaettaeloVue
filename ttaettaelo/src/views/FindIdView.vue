@@ -1,21 +1,35 @@
 <template>
-  <div>
-    <h2>아이디 찾기</h2>
+  <div class="findId" @submit.prevent="findId">
+    <form>
+      <div class="logo">
+        <a href="/">
+          <span style="color: #43C344;">때</span>
+          <span style="color: #FEDE4F;">때</span>
+          <span style="color: #F682B3;">로</span>
+        </a>
+      </div>
 
-    <!-- 이름, 이메일 입력 -->
-    <input v-model="name" placeholder="이름" />
-    <input v-model="email" placeholder="이메일" />
+      <h5>아이디 찾기</h5>
 
-    <!-- 이메일 인증 컴포넌트 -->
-    <EmailVerification :email="email" @verified="onVerified" />
-    <p v-if="isVerified" style="color: green;">이메일 인증이 완료되었습니다</p>
+      <div class="input-group mb-4">
+        <input type="text" class="form-control" :disabled="isSearched" v-model="name" placeholder="이름" maxlength="6">
+      </div>
 
-    <!-- 인증 완료되면 아이디 찾기 버튼 활성화 -->
-    <button :disabled="!isVerified" @click="findId">아이디 찾기</button>
+      <div class="mb-4">
+        <div class="input-group">
+          <input type="email" class="form-control" :disabled="isSearched" v-model="email" placeholder="이메일">
+        </div>
+        <EmailVerification :email="email" @verified="onVerified" style="margin-top: 5px;"/>
+        <p v-if="isVerified" style="color: green; font-size: 0.875rem;">이메일 인증이 완료되었습니다</p>
+      </div>
 
-    <p v-if="isSearched && foundId">당신의 아이디는 <strong>{{ foundId }}</strong>입니다.</p>
-    <p v-if="isSearched && !foundId && !errorMessage">일치하는 사용자가 없습니다.</p>
-    <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+      <button class="btn btn-outline-secondary w-100" :disabled="!isVerified" type="submit">아이디 찾기</button>
+
+      <div class="mt-3 knowId">
+        <p v-if="isSearched && foundId">당신의 아이디는 <strong>{{ foundId }}</strong>입니다.</p>
+        <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+      </div>
+    </form>
   </div>
 </template>
 
@@ -35,7 +49,8 @@ export default {
       foundId: null,
       isVerified: false,
       errorMessage: '',
-      isSearched: false
+      isSearched: false,
+      emailError: ''
     }
   },
   methods: {
@@ -76,7 +91,70 @@ export default {
 </script>
 
 <style scoped>
+.findId {
+  background-color: #F6F4EB;
+  height: 100vh; /* 화면 전체 높이 */
+  display: flex;
+  justify-content: center; /* 가로 중앙 */
+  align-items: center;
+  justify-content: center;
+}
+
+form {
+  width: 100%;
+  max-width: 400px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: 5px solid #4682A9;
+}
+
+.input-group input:focus {
+  outline: none;
+  box-shadow: none;
+  transform: none;
+  border: 2px solid #4682A9;
+}
+
+.logo {
+  font-size: 30px;
+  font-weight: 800;
+  margin: 25px 0 25px 0;
+  text-align: center;
+}
+.logo a {
+  text-decoration: none; /* 링크 밑줄 제거 */
+}
+
+.btn {
+  background-color: #4682A9;
+  border-color: #4682A9;
+  color: white;
+}
+.btn:hover {
+  background-color: #91C8E4; /* 마우스 올렸을 때 색상 */
+  border-color: #91C8E4;
+}
+
+.knowId {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 1.1rem;
+}
+.knowId strong {
+  font-size: 1.25rem;
+  color: #4682A9;
+  font-weight: 700;
+}
+.knowId .error {
+  color: #dc3545;
+  margin-top: 16px;
+}
+
 .error {
-  color: red;
+  color: #dc3545;
+  margin: 5px;
+  font-size: 0.875rem;
 }
 </style>

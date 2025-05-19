@@ -1,6 +1,6 @@
 <template>
   <div class="bathhouse">
-        <input type="text" v-model="searchKeyword" @keyup.enter="search" placeholder="이름, 장소 또는 태그로 검색" class="search-input"/>
+        <input type="text" v-model="searchKeyword" @keyup.enter="search" placeholder="이름, 장소 또는 태그로 검색" class="search-input" maxlength="20">
         <button @click="search">검색</button>
         <ul>
             <li v-for="bathhouse in currentBathhouses" :key="bathhouse.bathhouseInfoId">

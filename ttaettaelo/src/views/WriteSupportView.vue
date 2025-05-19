@@ -1,22 +1,25 @@
-<!-- eslint-disable no-undef -->
 <template>
   <div class="write-support">
-  <h3>문의하기 글 작성</h3>
-  <form @submit.prevent="submitSupport">
-      <div>
-        <label for="memberName">작성자</label>
-        <input type="text" v-model="memberName" id="memberName" readonly />
+    <form @submit.prevent="submitSupport">
+      <h5>문의하기 글 작성</h5>
+
+      <div class="input-group mb-4">
+        <label for="memberName" class="form-label">작성자</label>
+        <input class="form-control w-100" type="text" v-model="memberName" id="memberName" readonly />
       </div>
-      <div>
-        <label for="title">제목</label>
-        <input type="text" v-model="newSupport.title" id="title" required />
+
+      <div class="input-group mb-4">
+        <label for="title" class="form-label">제목</label>
+        <input class="form-control w-100" type="text" v-model="newSupport.title" id="title" required />
       </div>
-      <div>
-        <label for="content">내용</label>
-        <textarea v-model="newSupport.content" id="content" required></textarea>
+
+      <div class="input-group mb-4">
+        <label for="content" class="form-label">내용</label>
+        <textarea class="form-control w-100" v-model="newSupport.content" id="content" required></textarea>
       </div>
+
       <div>
-        <button type="submit">작성 완료</button>
+        <button class="btn btn-outline-secondary w-100" type="submit">작성 완료</button>
       </div>
     </form>
   </div>
@@ -77,30 +80,53 @@ export default {
 
 <style scoped>
 .write-support {
-  padding: 20px;
-  background-color: #f4f4f4;
-  border-radius: 8px;
+  background-color: #F6F4EB;
+  padding: 40px 20px;
+  display: flex;
+  justify-content: center;
 }
 
-.write-support input,
-.write-support textarea {
+form {
   width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-  border-radius: 5px;
-  border: 1px solid #ddd;
+  max-width: 400px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: 5px solid #4682A9;
+  display: block;
 }
 
-.write-support button {
-  padding: 10px 20px;
-  background-color: #4CAF50;
+.write-support textarea {
+  resize: none;
+  height: 100px;
+}
+.write-support textarea:focus {
+  outline: none;
+  box-shadow: none;
+  transform: none;
+  border: 2px solid #4682A9;
+}
+
+.input-group {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: bold;
+}
+.input-group input:focus {
+  outline: none;
+  box-shadow: none;
+  transform: none;
+  border: 2px solid #4682A9;
+}
+
+.btn {
+  background-color: #4682A9;
+  border-color: #4682A9;
   color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
 }
-
-.write-support button:hover {
-  background-color: #45a049;
+.btn:hover {
+  background-color: #91C8E4; /* 마우스 올렸을 때 색상 */
+  border-color: #91C8E4;
 }
 </style>

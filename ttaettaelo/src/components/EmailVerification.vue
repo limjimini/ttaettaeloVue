@@ -1,16 +1,20 @@
 <template>
   <div class="email-verification">
     <form @submit.prevent="sendVerification">
-      <!-- <input type="email" v-model="email" placeholder="이메일 주소" required /> -->
-      <button type="submit" :disabled="isVerified">인증번호 보내기</button>
+      <p v-if="!validateEmail(email)" class="message" style="color: #dc3545;">
+        올바른 이메일 형식을 입력해주세요.
+      </p>
+      <button class="btn btn-outline-secondary w-100" type="submit" :disabled="!validateEmail(email) || isVerified">인증번호 보내기</button>
     </form>
 
-    <div v-if="codeSent">
-      <input type="text" v-model="userCode" placeholder="인증번호 입력" :disabled="isVerified">
-      <button @click.prevent="checkCode" :disabled="isVerified">확인</button>
+    <div class="mt-3" v-if="codeSent">
+      <div class="input-group">
+        <input class="form-control" type="text" v-model="userCode" placeholder="인증번호 입력" :disabled="isVerified" maxlength="6">
+        <button class="btn btn-outline-secondary" @click.prevent="checkCode" :disabled="isVerified">확인</button>
+      </div>
     </div>
 
-    <p v-if="message">{{ message }}</p>
+    <p v-if="message" class="message" :style="{ color: isVerified ? 'green' : '#dc3545' }">{{ message }}</p>
   </div>
 </template>
 
@@ -34,6 +38,10 @@ export default {
   },
   methods: {
     async sendVerification () {
+      if (!this.validateEmail(this.email)) {
+        return
+      }
+
       try {
         console.log('입력된 이메일:', this.email)
         this.codeSent = true
@@ -71,6 +79,10 @@ export default {
         console.error('인증 실패:', error)
         this.message = '서버 오류가 발생했습니다.'
       }
+    },
+    validateEmail (email) {
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      return re.test(email)
     }
   }
 }
@@ -80,5 +92,31 @@ export default {
 .email-verification {
   max-width: 400px;
   margin: 0 auto;
+}
+
+.btn {
+  background-color: #4682A9;
+  border-color: #4682A9;
+  color: white;
+}
+.btn:hover {
+  background-color: #91C8E4; /* 마우스 올렸을 때 색상 */
+  border-color: #91C8E4;
+}
+.btn:active {
+  background-color: #91C8E4; /* 눌렀을 때 색상 */
+  border-color: #91C8E4;
+}
+
+.message {
+  margin: 5px;
+  font-size: 0.875rem;
+}
+
+.input-group input:focus {
+  outline: none;
+  box-shadow: none;
+  transform: none;
+  border: 2px solid #4682A9;
 }
 </style>

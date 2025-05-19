@@ -1,64 +1,98 @@
 <template>
     <div class="signUp">
         <form @submit.prevent="submitForm">
-          <div class="input-group mb-3">
-            <input type="text" id="loginId" class="form-control" v-model="loginId" placeholder="아이디" required>
-            <button type="button" @click="checkLoginId">중복 확인</button>
-          </div>
-          <p v-if="checkMessage" :style="{color: isAvailable ? 'green' : 'red'}">{{ checkMessage }}</p>
-          <p v-if="!loginId" class="text-danger">필수 입력입니다.</p>
-
-          <div class="input-group mb-3">
-            <input type="password" id="password" class="form-control" v-model="password" @input="validatePassword" placeholder="비밀번호" required>
-          </div>
-          <p v-if="!password" class="text-danger">필수 입력입니다.</p>
-          <p v-if="lengthError" class="text-danger">{{ lengthError }}</p>
-          <p v-if="formatError" class="text-danger">{{ formatError }}</p>
-
-          <div class="input-group mb-3">
-            <input type="password" id="passwordCheck" class="form-control" v-model="passwordCheck" placeholder="비밀번호 확인" required>
-          </div>
-          <p v-if="!passwordCheck" class="text-danger">필수 입력입니다.</p>
-          <p v-if="password !== passwordCheck" class="text-danger">
-            비밀번호가 일치하지 않습니다.
-          </p>
-
-          <div class="input-group mb-3">
-            <input type="text" id="name" class="form-control" v-model="name" placeholder="이름" maxlength="6" @input="validateName" required>
-          </div>
-          <p v-if="!name" class="text-danger">필수 입력입니다.</p>
-          <p v-if="name && name.length > 6" class="text-danger">
-            이름은 최대 6자까지 입력 가능합니다.
-          </p>
-
-          <div class="input-group mb-3">
-            <input type="email" id="email" class="form-control" v-model="email" placeholder="이메일" :disabled="isVerified" required>
-          </div>
-          <p v-if="!email" class="text-danger">필수 입력입니다.</p>
-          <EmailVerification :email="email" @verified="handleVerification" />
-          <p v-if="!isVerified" class="text-danger">이메일 인증을 완료해야 회원가입할 수 있습니다.</p>
-
-          <div class="input-group mb-3">
-            <input type="text" id="address" class="form-control" v-model="address" placeholder="주소(선택)" readonly>
-            <button id="postcode" @click="openPostcode">주소 찾기</button>
+          <div class="logo">
+            <a href="/">
+              <span style="color: #43C344;">때</span>
+              <span style="color: #FEDE4F;">때</span>
+              <span style="color: #F682B3;">로</span>
+            </a>
           </div>
 
-          <div class="input-group mb-3">
-            <input type="text" id="gender" class="form-control" placeholder="성별" disabled>
-            <div>
-              <input class="btn-check" type="radio" id="man" v-model="gender" value="남자" autocomplete="off">
-              <label class="btn btn-secondary" for="man">남자</label>
-
-              <input class="btn-check" type="radio" id="woman" v-model="gender" value="여자" autocomplete="off">
-              <label class="btn btn-secondary" for="woman">여자</label>
-
-              <input class="btn-check" type="radio" id="secret" v-model="gender" value="비밀" autocomplete="off">
-              <label class="btn btn-secondary" for="secret">비밀</label>
+          <div class="mb-4">
+            <div class="input-group">
+              <input type="text" id="loginId" class="form-control" v-model="loginId" placeholder="아이디" @blur="loginIdTouched = true" required>
+              <button class="btn btn-outline-secondary" type="button" @click="checkLoginId">중복 확인</button>
             </div>
-            <p v-if="!gender" class="text-danger">필수 선택입니다.</p>
+            <div class="error">
+              <p v-if="checkMessage" :style="{color: isAvailable ? 'green' : '#dc3545'}">{{ checkMessage }}</p>
+              <p v-if="!loginId && loginIdTouched" class="text-danger">필수 입력입니다.</p>
+            </div>
           </div>
 
-          <button type="submit" :disabled="!isVerified || !loginId || !password || !passwordCheck || !name || !email || !gender || !isAvailable">가입하기</button>
+          <div class="mb-4">
+            <div class="input-group">
+              <input type="password" id="password" class="form-control" v-model="password" @input="validatePassword" placeholder="비밀번호" @blur="passwordTouched = true" required>
+            </div>
+            <div class="error">
+              <p v-if="!password && passwordTouched" class="text-danger">필수 입력입니다.</p>
+              <p v-if="lengthError" class="text-danger">{{ lengthError }}</p>
+              <p v-if="formatError" class="text-danger">{{ formatError }}</p>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <div class="input-group">
+              <input type="password" id="passwordCheck" class="form-control" v-model="passwordCheck" placeholder="비밀번호 확인" @blur="passwordCheckTouched = true" required>
+            </div>
+            <div class="error">
+              <p v-if="!passwordCheck && passwordCheckTouched" class="text-danger">필수 입력입니다.</p>
+              <p v-if="password !== passwordCheck" class="text-danger">
+                비밀번호가 일치하지 않습니다.
+              </p>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <div class="input-group">
+              <input type="text" id="name" class="form-control" v-model="name" placeholder="이름" maxlength="6" @input="validateName" @blur="nameTouched = true" required>
+            </div>
+            <div class="error">
+              <p v-if="!name && nameTouched" class="text-danger">필수 입력입니다.</p>
+              <p v-if="name && name.length > 6" class="text-danger">
+                이름은 최대 6자까지 입력 가능합니다.
+              </p>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <div class="input-group">
+              <input type="email" id="email" class="form-control" v-model="email" placeholder="이메일" :disabled="isVerified" @blur="emailTouched = true" required>
+            </div>
+            <div class="error">
+              <p v-if="!email && emailTouched" class="text-danger">필수 입력입니다.</p>
+              <EmailVerification :email="email" @verified="handleVerification" />
+              <p v-if="!isVerified" class="text-danger">이메일 인증을 완료해야 회원가입할 수 있습니다.</p>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <div class="input-group">
+              <input type="text" id="address" class="form-control" v-model="address" placeholder="주소(선택)">
+              <button class="btn btn-outline-secondary" id="postcode" @click="openPostcode">주소 찾기</button>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <div class="input-group">
+              <input type="text" id="gender" class="form-control" placeholder="* 성별(필수)" disabled>
+              <div class="gender-option">
+                <input class="btn-check" type="radio" id="man" v-model="gender" value="남자" autocomplete="off">
+                <label class="btn btn-outline-secondary gender-btn" for="man">남자</label>
+
+                <input class="btn-check" type="radio" id="woman" v-model="gender" value="여자" autocomplete="off">
+                <label class="btn btn-outline-secondary gender-btn" for="woman">여자</label>
+
+                <input class="btn-check" type="radio" id="secret" v-model="gender" value="비밀" autocomplete="off">
+                <label class="btn btn-outline-secondary secret-btn" for="secret">비밀</label>
+              </div>
+            </div>
+            <!-- <div class="error">
+              <p v-if="!gender" class="text-danger">필수 선택입니다.</p>
+            </div> -->
+          </div>
+
+          <button class="btn btn-outline-secondary w-100" type="submit" :disabled="!isVerified || !loginId || !password || !passwordCheck || !name || !email || !gender || !isAvailable">가입하기</button>
         </form>
     </div>
 </template>
@@ -75,14 +109,19 @@ export default {
   data () {
     return {
       loginId: '',
+      loginIdTouched: false,
       checkMessage: '',
       isAvailable: false,
       password: '',
+      passwordTouched: false,
       lengthError: '',
       formatError: '',
       passwordCheck: '',
+      passwordCheckTouched: false,
       name: '',
+      nameTouched: false,
       email: '',
+      emailTouched: false,
       isVerified: false,
       address: '',
       gender: ''
@@ -118,6 +157,13 @@ export default {
         })
     },
     checkLoginId () {
+      // 아이디가 비어있는지 체크
+      if (!this.loginId) {
+        this.checkMessage = '아이디를 입력해주세요.'
+        this.isAvailable = false
+        return
+      }
+
       axios.get('http://localhost:8081/checkLoginId', {
         params: { loginId: this.loginId }
       })
@@ -169,13 +215,10 @@ export default {
 
 <style scoped>
 .signUp {
-  max-width: 400px;
-  margin: auto;
-  padding: 20px;
-  height: 100vh;
+  background-color: #F6F4EB;
+  padding: 40px 20px;
   display: flex;
   justify-content: center;
-  align-items: center;
 }
 
 form {
@@ -186,6 +229,48 @@ form {
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border: 5px solid #4682A9;
-  border-radius: 10px;
+}
+
+.input-group input:focus {
+  outline: none;
+  box-shadow: none;
+  transform: none;
+  border: 2px solid #4682A9;
+}
+
+.logo {
+  font-size: 30px;
+  font-weight: 800;
+  margin: 25px 0 75px 0;
+  text-align: center;
+}
+.logo a {
+  text-decoration: none; /* 링크 밑줄 제거 */
+}
+
+.btn {
+  background-color: #4682A9;
+  border-color: #4682A9;
+  color: white;
+}
+
+.error {
+  margin-top: 5px;
+}
+.error p {
+  margin: 5px;
+  font-size: 0.875rem;
+}
+
+.gender-btn {
+  border-radius: 0; /* 기본적으로 모든 버튼은 사각형 */
+}
+.secret-btn {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.input-group .btn:hover {
+  background-color: #91C8E4; /* 마우스 올렸을 때 색상 */
+  border-color: #91C8E4;
 }
 </style>

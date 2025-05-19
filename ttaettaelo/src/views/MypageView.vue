@@ -1,61 +1,78 @@
 <template>
   <div class="mypage">
-    <h2>마이페이지</h2>
-    <div v-if="user">
-      <p><strong>아이디:</strong> {{ user.loginId }}</p>
+    <form @submit.prevent="submitForm">
+      <h5>마이페이지</h5>
 
-      <div class="mb-2">
-        <label>비밀번호</label>
-        <input v-model="user.password" type="password" class="form-control" @input="validatePassword">
-        <span v-if="lengthError" class="text-danger">{{ lengthError }}</span>
-        <span v-if="formatError" class="text-danger">{{ formatError }}</span>
+      <div v-if="user">
+        <div class="mb-4">
+          <label>아이디</label>
+          <input v-model="user.loginId" type="text" class="form-control" disabled>
+        </div>
+
+        <div class="mb-2">
+          <label>비밀번호</label>
+          <input v-model="user.password" type="password" class="form-control" @input="validatePassword">
+          <span v-if="lengthError" class="text-danger">{{ lengthError }}</span>
+          <span v-if="formatError" class="text-danger">{{ formatError }}</span>
+        </div>
+
+        <div class="mb-4">
+          <label>비밀번호 확인</label>
+          <input v-model="user.passwordCheck" type="password" class="form-control" @blur="checkPasswordCheck"/>
+          <div style="margin: 5px;">
+            <span v-if="user.password && user.passwordCheck && user.password !== user.passwordCheck" class="text-danger">
+              비밀번호가 일치하지 않습니다.
+            </span>
+            <button type="button" v-if="canChangePassword" class="btn btn-outline-secondary w-100" @click="changePassword">비밀번호 변경</button>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label>이름</label>
+          <input v-model="user.name" type="text" class="form-control" @input="validateName">
+          <span v-if="nameLengthError" class="text-danger">이름은 최대 6자까지만 입력할 수 있습니다.</span>
+          <span v-if="nameNull" class="text-danger">이름을 입력해주세요.</span>
+        </div>
+
+        <div class="mb-4">
+          <label>이메일</label>
+          <input v-model="user.email" type="email" class="form-control" @input="checkEmailChange">
+          <div style="margin: 5px; font-size: 0.875rem;">
+            <span v-if="emailChanged && !isVerified" class="text-danger">이메일 인증이 필요합니다.</span>
+            <span v-if="emailChanged && isVerified" class="text-success">이메일 인증이 완료되었습니다!</span>
+          </div>
+        </div>
+        <div class="mb-4" v-if="emailChanged && !isVerified">
+          <EmailVerification :email="user.email" @verified="handleVerification"/>
+        </div>
+
+        <div class="mb-4">
+          <label>성별</label>
+          <select v-model="user.gender" class="form-control">
+            <option value="남자">남자</option>
+            <option value="여자">여자</option>
+            <option value="비밀">비밀</option>
+          </select>
+        </div>
+
+        <div class="mb-4">
+          <label>주소</label>
+          <input v-model="user.address" type="text" class="form-control">
+          <button type="button" class="btn btn-outline-secondary w-100" id="postcode" @click="openPostcode" style="margin-top: 5px;">주소 찾기</button>
+        </div>
+
+        <button class="btn btn-outline-secondary w-100" type="submit" :disabled="!isFormValid">정보 수정</button>
       </div>
-
-      <div class="mb-2">
-        <label>비밀번호 확인</label>
-        <input v-model="user.passwordCheck" type="password" class="form-control" @blur="checkPasswordCheck"/>
+      <div v-else>
+        <p>로그인이 필요합니다.</p>
       </div>
+    </form>
 
-      <span v-if="user.password && user.passwordCheck && user.password !== user.passwordCheck" class="text-danger">
-        비밀번호가 일치하지 않습니다.
-      </span>
+    <form>
+      <h5>내가 좋아요한 목욕탕</h5>
 
-      <button v-if="canChangePassword" class="btn btn-warning mt-2" @click="changePassword">비밀번호 변경</button>
-
-      <div class="mb-2">
-        <label>이름</label>
-        <input v-model="user.name" type="text" class="form-control" @input="validateName">
-        <span v-if="nameLengthError" class="text-danger">이름은 최대 6자까지만 입력할 수 있습니다.</span>
-        <span v-if="nameNull" class="text-danger">이름을 입력해주세요.</span>
-      </div>
-
-      <div class="mb-2">
-        <label>이메일</label>
-        <input v-model="user.email" type="email" class="form-control" @input="checkEmailChange">
-        <span v-if="emailChanged && !isVerified" class="text-danger">이메일 인증이 필요합니다.</span>
-        <span v-if="emailChanged && isVerified" class="text-success">이메일 인증이 완료되었습니다!</span>
-      </div>
-      <div class="mb-2" v-if="emailChanged && !isVerified">
-        <EmailVerification :email="user.email" @verified="handleVerification"/>
-      </div>
-
-      <div class="mb-2">
-        <label>성별</label>
-        <select v-model="user.gender" class="form-control">
-          <option value="남자">남자</option>
-          <option value="여자">여자</option>
-          <option value="비밀">비밀</option>
-        </select>
-      </div>
-
-      <div class="mb-2">
-        <label>주소</label>
-        <input v-model="user.address" type="text" class="form-control">
-        <button id="postcode" @click="openPostcode">주소 찾기</button>
-      </div>
-
-      <button type="submit" class="btn btn-primary mt-3" @click="submitForm" :disabled="!isFormValid">정보 수정</button>
-      <!-- <button type="submit" class="btn btn-primary mt-3" @click="submitForm" :disabled="!isFormInvalid">정보 수정</button> -->
+      <h5>내가 쓴 댓글</h5>
+    </form>
 
       <div class="liked-posts">
         <h3>내가 좋아요한 게시글</h3>
@@ -122,10 +139,6 @@
         </div>
       </div>
     </div>
-    <div v-else>
-      <p>로그인이 필요합니다.</p>
-    </div>
-  </div>
 </template>
 
 <script>
@@ -470,25 +483,42 @@ export default {
 
 <style scoped>
 .mypage {
-  max-width: 600px;
-  margin: 0 auto;
+  padding: 40px;
+  background-color: #F6F4EB;
+  display: flex;
+  justify-content: center; /* 가로 중앙 */
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
+
+form {
+  width: 100%;
+  max-width: 400px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: 5px solid #4682A9;
+  margin-bottom: 30px;
+}
+
+.form-control {
+  height: 40px;
+}
+
+.form-control:focus {
+  outline: none;
+  box-shadow: none;
+  transform: none;
+  border: 2px solid #4682A9;
+}
+
 .btn-danger {
-  background-color: red;
+  background-color: #dc3545;
   color: white;
 }
-/* .modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-} */
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -509,19 +539,16 @@ export default {
   width: 100%;
 }
 
-button {
-  padding: 10px 20px;
-  margin-top: 20px;
-  background-color: #007BFF;
+.btn {
+  background-color: #4682A9;
+  border-color: #4682A9;
   color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+}
+.btn:hover {
+  background-color: #91C8E4; /* 마우스 올렸을 때 색상 */
+  border-color: #91C8E4;
 }
 
-button:hover {
-  background-color: #0056b3;
-}
 input {
   padding: 10px;
   margin-top: 10px;
@@ -531,25 +558,7 @@ input {
   }
 
 .error-message {
-  color: red;
+  color: #dc3545;
   margin-top: 10px;
 }
-/* 모달 스타일 */
-/* .modal {
-  background: white;
-  padding: 20px;
-  border-radius: 5px;
-  max-width: 400px;
-  width: 100%;
-  text-align: center;
-} */
-
-/* 버튼 스타일 */
-/* .modal-actions button {
-  margin: 10px;
-} */
-
-/* .text-danger {
-  color: red;
-} */
 </style>

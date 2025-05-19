@@ -42,9 +42,15 @@ export default {
         document.body.classList.add('signup-page') // 회원가입 페이지일 때 클래스 추가
       } else if (to.name === 'Login') {
         document.body.classList.add('login-page') // 로그인인 페이지일 때 클래스 추가
+      } else if (to.name === 'FindId') {
+        document.body.classList.add('findId-page') // 아이디 찾기 페이지일 때 클래스 추가
+      } else if (to.name === 'FindPassword') {
+        document.body.classList.add('findPassword-page') // 비밀번호 찾기기 페이지일 때 클래스 추가
       } else {
         document.body.classList.remove('signup-page') // 다른 페이지일 때 클래스 제거
         document.body.classList.remove('login-page') // 다른 페이지일 때 클래스 제거
+        document.body.classList.remove('findId-page') // 다른 페이지일 때 클래스 제거
+        document.body.classList.remove('findPassword-page') // 다른 페이지일 때 클래스 제거
       }
     }
   },
@@ -54,6 +60,10 @@ export default {
       document.body.classList.add('signup-page')
     } else if (this.$route.name === 'Login') {
       document.body.classList.add('login-page')
+    } else if (this.$route.name === 'FindId') {
+      document.body.classList.add('findId-page')
+    } else if (this.$route.name === 'FindPassword') {
+      document.body.classList.add('findPassword-page')
     }
   },
   methods: {

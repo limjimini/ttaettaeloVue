@@ -1,60 +1,57 @@
 <template>
-    <div class="etiquette">
-      <h1>우리에게 왜 목욕탕이 필요할까요?</h1>
-      <p>목욕탕은 단순히 몸을 씻는 곳이 아니라 우리 건강에 다양한 영향을 줍니다. 이제 그 효능에 대해 함께 알아봅시다.</p>
+  <div class="etiquette">
+    <div class="container my-5">
+        <h1 class="text-center mb-4 fw-bold title">목욕탕 예절</h1>
 
-      <div class="benefit">
-        <h2>통증 완화</h2>
-        <p>근육통을 줄이고 관절 운동을 개선하며, 관절염의 통증을 완화하는 데 도움을 줍니다. 그리고 체온을 따뜻하게 만들어 복통 완화에도 도움이 됩니다.</p>
-      </div>
+        <p class="text-center fs-5 text-muted">
+          많은 사람들이 이용하는 목욕탕! 함께 사용하는 만큼 지켜야 할 예절이 있습니다.
+        </p>
+        <p class="text-center fs-5 text-muted mb-4">
+          서로서로 예절을 지켜 즐겁고 따뜻하게 목욕탕을 이용해 봅시다.
+        </p>
 
-      <div class="benefit">
-        <h2>스트레스 감소</h2>
-        <p>혈액 순환을 개선하여 이완을 촉진시켜줍니다. 이는 몸의 이완과 스트레스 감소를 불러와 휴식의 느낌을 낼 수 있습니다.</p>
-      </div>
-
-      <div class="benefit">
-        <h2>심혈관 건강 개선</h2>
-        <p>스트레스가 감소하여 심혈관 질환 위험이 낮아질 수 있습니다.</p>
-      </div>
-
-      <div class="benefit">
-        <h2>다이어트 효과</h2>
-        <p>땀을 통해 몸속에 쌓인 독소와 노폐물을 배출하여 다이어트에 도움을 줍니다.</p>
-      </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item"> 다른 사람의 세면도구를 만지거나 몰래 사용하지 마세요.</li>
+          <li class="list-group-item"> 옆 사람에게 비누 거품이나 물이 튀지 않도록 하세요.</li>
+          <li class="list-group-item"> 소리를 크게 지르거나 시끄럽게 움직이지 않도록 하세요.</li>
+          <li class="list-group-item"> 바닥에 물기가 가득하니 뛰어다니지 마세요.</li>
+          <li class="list-group-item"> 적정 목욕 시간을 지키세요. 권장 시간은 30분에서 1시간입니다.</li>
+          <li class="list-group-item"> 탕에 들어가기 전에 머리 감고 샤워한 후 들어가세요. 머리카락이 길면 묶고 들어가세요.</li>
+          <li class="list-group-item"> 탕 안에서 때를 밀거나 머리를 씻지 마세요.</li>
+          <li class="list-group-item"> 탕 안에서 수영이나 물장구를 치는 등 장난치지 마세요.</li>
+          <li class="list-group-item"> 목욕을 끝낸 후 빨래를 하지 마세요.</li>
+          <li class="list-group-item"> 사용한 공간은 깨끗하게 정리하세요.</li>
+          <li class="list-group-item"> 목욕을 마친 후 물기를 닦아주세요.</li>
+        </ul>
     </div>
+  </div>
 </template>
 
 <script>
-
 </script>
 
 <style scoped>
 .etiquette {
-  margin: 20px;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
+  background-color: #F6F4EB;
+  min-height: 100vh;
+  padding: 40px;
 }
 
-h1 {
-  font-size: 26px;
-  margin-bottom: 20px;
+.container {
+  background-color: #F6F4EB;
 }
 
-h2 {
-  font-size: 20px;
-  margin-top: 15px;
-  color: #333;
+.list-group-item {
+  font-size: 1.05rem;
+  padding: 15px 20px;
+  border: none;
+  border-bottom: 1px solid #EAEAEA;
+}
+.list-group-item:last-child {
+  border-bottom: none;
 }
 
-p {
-  font-size: 16px;
-  line-height: 1.6;
-  margin-bottom: 15px;
-}
-
-.benefit {
-  margin-bottom: 25px;
+.title {
+  color: #4682A9;
 }
 </style>

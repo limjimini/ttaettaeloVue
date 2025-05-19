@@ -37,7 +37,7 @@
         <!-- 검색창 -->
         <div id="search-home">
           <div class="input-group mb-3">
-            <input v-model="searchKeyword" @keyup.enter="goToBathhouseSearch" type="text" class="form-control form-control-lg" placeholder="검색어를 입력해주세요" aria-label="Search" aria-describedby="search-button">
+            <input v-model="searchKeyword" @keyup.enter="goToBathhouseSearch" type="text" class="form-control form-control-lg" aria-label="Search" aria-describedby="search-button" maxlength="30">
             <button class="btn btn-outline-secondary" type="button" id="search-button" @click="goToBathhouseSearch">
               <i class="bi bi-search"></i>
             </button>
