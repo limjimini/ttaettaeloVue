@@ -17,7 +17,7 @@
 
       <div class="mb-4">
         <div class="input-group">
-          <input type="email" class="form-control" :disabled="isSearched" v-model="email" placeholder="이메일">
+          <input type="email" class="form-control" :disabled="isSearched" v-model="email" placeholder="이메일" maxlength="100">
         </div>
         <EmailVerification :email="email" @verified="onVerified" style="margin-top: 5px;"/>
         <p v-if="isVerified" style="color: green; font-size: 0.875rem;">이메일 인증이 완료되었습니다</p>
@@ -60,7 +60,7 @@ export default {
     async findId () {
       try {
         // 백엔드에 이름과 이메일을 보내서 아이디 찾기
-        const response = await axios.post('http://localhost:8081/findId', {
+        const response = await axios.post('http://localhost:8081/api/findId', {
           name: this.name,
           email: this.email
         })

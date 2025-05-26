@@ -1,7 +1,7 @@
 <template>
   <div class="email-verification">
     <form @submit.prevent="sendVerification">
-      <p v-if="!validateEmail(email)" class="message" style="color: #dc3545;">
+      <p v-if="!validateEmail(email) &&  email !== ''" class="message" style="color: #dc3545;">
         올바른 이메일 형식을 입력해주세요.
       </p>
       <button class="btn btn-outline-secondary w-100" type="submit" :disabled="!validateEmail(email) || isVerified">인증번호 보내기</button>
@@ -30,10 +30,10 @@ export default {
   },
   data () {
     return {
-      userCode: '',
-      message: '',
-      codeSent: false,
-      isVerified: false
+      userCode: '', // 사용자가 입력한 인증번호
+      message: '', // 메시지
+      codeSent: false, // 인증번호 전송 여부
+      isVerified: false // 인증 성공 여부
     }
   },
   methods: {
@@ -46,7 +46,7 @@ export default {
         console.log('입력된 이메일:', this.email)
         this.codeSent = true
         this.message = '인증번호를 이메일로 전송했습니다.'
-        const response = await axios.post('http://localhost:8081/mailSend', null, {
+        const response = await axios.post('http://localhost:8081/api/mailSend', null, {
           params: { email: this.email }
         })
         if (response.data.success) {
@@ -61,7 +61,7 @@ export default {
     },
     async checkCode () {
       try {
-        const response = await axios.get('http://localhost:8081/mailCheck', {
+        const response = await axios.get('http://localhost:8081/api/mailCheck', {
           params: {
             email: this.email,
             memberNumber: this.userCode

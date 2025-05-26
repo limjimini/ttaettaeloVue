@@ -64,7 +64,10 @@ const routes = [
     path: '/bathhouse/:bathhouseInfoId',
     name: 'BathhouseDetailed',
     component: BathhouseDetailed,
-    props: true
+    props: true,
+    meta: {
+      reload: true
+    }
   },
   {
     path: '/support',

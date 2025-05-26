@@ -1,53 +1,88 @@
 <template>
-  <div v-if="bathhouse" class="bathhouse-detail">
-    <h1>{{ bathhouse.name }}</h1>
-      <p>{{ bathhouse.introduction }}</p>
-      <p>{{ bathhouse.type }}</p>
-      <p>{{ bathhouse.location }}</p>
-      <p v-if="bathhouse.startTime && bathhouse.endTime">
-        영업시간: {{ bathhouse.startTime }} ~ {{ bathhouse.endTime === '23:59:59' ? '24:00' : bathhouse.endTime }}
-      </p>
-      <p v-if="bathhouse.closedDay">
-        <strong>휴무일:</strong> {{ bathhouse.closedDay }}
-      </p>
-      <p>{{ bathhouse.contactNumber }}</p>
-      <img v-if="bathhouse.imgUrl != null" :src="bathhouse.imgUrl" :alt="이미지" @error="$event.target.src=require('@/assets/ttaettaelo.png')">
-      <!-- <img v-else :src="require('@/assets/ttaettaelo.png')" :alt="이미지2"> -->
-      <div v-if="bathhouse.tags && bathhouse.tags.length">
-        <h3>태그</h3>
-        <ul class="tags">
-          <li v-for="tag in bathhouse.tags" :key="tag.tagId" class="tag">
-            {{ tag.tagName }}
-          </li>
-        </ul>
-      </div>
-
-      <div class="like-section">
-        <button @click="bathhouseLike">
-          ♥ {{ likeCount }} 좋아요
-        </button>
-      </div>
-
-      <div class="review-section">
-        <div class="review-wrapper">
-          <!-- 로그인 상태 확인 -->
-          <div v-if="!isLoggedIn" class="blurred-review">
-            <p class="blurred-text">로그인 후 리뷰를 볼 수 있습니다.</p>
+  <div class="bathhouse-detailed">
+    <div v-if="bathhouse" class="container p-5 bathhouse-detail">
+      <div class="card">
+        <div class="row g-0">
+          <!-- 이미지 -->
+          <div class="col-md-5">
+            <img
+              v-if="bathhouse.imgUrl"
+              :src="bathhouse.imgUrl"
+              class="img-fluid rounded-start w-100 h-100 object-fit-cover"
+              alt="목욕탕 이미지"
+              @error="$event.target.src=require('@/assets/ttaettaelo.png')"
+            />
           </div>
 
-          <!-- 리뷰 폼 삽입 -->
-          <review-form class="reviews" :bathhouseInfoId="bathhouse.bathhouseInfoId" @review-submitted="fetchReviews" @edit="handleEditReview" @delete="handleDeleteReview"/>
-          <!-- 리뷰 목록 -->
-          <!-- <div v-for="review in reviews" :key="review.reviewId">
-            <p>{{ review.name }}님의 리뷰</p>
-            <p>별점: {{ review.rating }}★</p>
-            <p>{{ review.content }}</p>
-          </div> -->
+          <!-- 상세 정보 -->
+          <div class="col-md-7">
+            <div class="card-body">
+              <h2 class="card-title">{{ bathhouse.name }}</h2>
+              <p class="card-text text-muted mb-2">{{ bathhouse.type }}</p>
+              <p class="card-text">{{ bathhouse.introduction }}</p>
+
+              <ul class="list-group list-group-flush mt-3">
+                <li class="list-group-item">
+                  <strong>위치:</strong> {{ bathhouse.location }}
+                </li>
+                <li class="list-group-item" v-if="bathhouse.startTime && bathhouse.endTime">
+                  <strong>영업시간:</strong>
+                  {{ bathhouse.startTime }} ~
+                  {{ bathhouse.endTime === '23:59:59' ? '24:00' : bathhouse.endTime }}
+                </li>
+                <li class="list-group-item" v-if="bathhouse.closedDay">
+                  <strong>휴무일:</strong> {{ bathhouse.closedDay }}
+                </li>
+                <li class="list-group-item">
+                  <strong>연락처:</strong> {{ bathhouse.contactNumber }}
+                </li>
+              </ul>
+
+              <!-- 태그 -->
+              <div v-if="bathhouse.tags && bathhouse.tags.length" class="tags mt-3">
+                <span
+                  v-for="tag in bathhouse.tags"
+                  :key="tag.tagId"
+                  class="badge bg-secondary me-1 badge-tag"
+                >
+                  #{{ tag.tagName }}
+                </span>
+              </div>
+
+              <!-- 좋아요 버튼 -->
+              <div class="mt-3">
+                <button class="btn btn-outline-danger" @click="bathhouseLike">
+                  ♥ {{ likeCount }}
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
+
+      <!-- 리뷰 섹션 -->
+      <div class="mt-5 review-section">
+        <div class="card p-4">
+          <div v-if="!isLoggedIn" class="alert alert-info text-center">
+            로그인 후 리뷰를 볼 수 있습니다.
+          </div>
+
+          <!-- 리뷰 폼 -->
+          <review-form
+            v-if="isLoggedIn"
+            class="reviews"
+            :bathhouseInfoId="bathhouse.bathhouseInfoId"
+            @review-submitted="fetchReviews"
+            @edit="handleEditReview"
+            @delete="handleDeleteReview"
+          />
         </div>
-  </div>
-  <div v-else>
-    <p>불러오는 중...</p>
+      </div>
+    </div>
+    <div v-else class="text-center mt-5">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p class="mt-3">불러오는 중...</p>
+    </div>
   </div>
 </template>
 
@@ -74,6 +109,7 @@ export default {
   },
   async mounted () {
     await this.getBathhouseDetailed()
+    await this.fetchLikeCount()
     console.log('bathhouse 정보 로딩 완료:', this.bathhouse)
     console.log('bathhouse 정보 로딩 완료:', this.bathhouse.bathhouseInfoId)
     if (this.bathhouse && this.bathhouse.bathhouseInfoId) {
@@ -98,11 +134,21 @@ export default {
   //     }
   //   }
   // },
+  watch: {
+    bathhouseInfoId: {
+      immediate: true,
+      handler (newId) {
+        if (newId) {
+          this.getBathhouseDetailed()
+        }
+      }
+    }
+  },
   methods: {
     async getBathhouseDetailed () {
       try {
         console.log('상세 페이지 ID:', this.bathhouseInfoId)
-        const response = await axios.get(`http://localhost:8081/bathhouse/${this.bathhouseInfoId}`)
+        const response = await axios.get(`http://localhost:8081/api/bathhouse/${this.bathhouseInfoId}`)
         this.bathhouse = response.data
         console.log('상세 정보:', this.bathhouse)
       } catch (error) {
@@ -112,7 +158,7 @@ export default {
     async fetchReviews () {
       try {
         console.log('현재 bathhouse.id:', this.bathhouse.id)
-        const response = await axios.get(`http://localhost:8081/reviews/${this.bathhouse.bathhouseInfoId}`)
+        const response = await axios.get(`http://localhost:8081/api/reviews/${this.bathhouse.bathhouseInfoId}`)
         this.reviews = response.data
         console.log('리뷰 응답 데이터:', response.data)
       } catch (error) {
@@ -127,20 +173,22 @@ export default {
       }
 
       try {
-        const res = await axios.post('http://localhost:8081/bathhouse/like', {
+        const res = await axios.post('http://localhost:8081/api/bathhouse/like', {
           bathhouseInfoId: this.bathhouseInfoId,
           memberId: user.memberId
         })
 
         this.like = res.data.like
         this.likeCount = res.data.likeCount
+
+        await this.fetchLikeCount()
       } catch (e) {
         console.error('좋아요 실패:', e)
       }
     },
     async fetchLikeCount () {
       try {
-        const res = await axios.get(`http://localhost:8081/bathhouse/${this.bathhouseInfoId}/like`)
+        const res = await axios.get(`http://localhost:8081/api/bathhouse/${this.bathhouseInfoId}/like`)
         this.likeCount = res.data.likeCount
       } catch (e) {
         console.error('좋아요 수 조회 실패:', e)
@@ -166,8 +214,13 @@ export default {
 </script>
 
 <style scoped>
-.bathhouse-detail {
-  padding: 20px;
+.bathhouse-detailed {
+  background-color: #f6f4eb;
+}
+
+.bathhouse-detail img {
+  object-fit: cover;
+  height: 100%;
 }
 
 .review-wrapper {
@@ -198,5 +251,10 @@ export default {
 
 .reviews {
   margin-top: 20px;
+}
+
+.alert {
+  background-color: #91c8e4;
+  border: none;
 }
 </style>

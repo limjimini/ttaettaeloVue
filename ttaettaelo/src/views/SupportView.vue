@@ -1,33 +1,41 @@
 <template>
   <div class="support">
-    <!-- 문의하기 글 작성 버튼 -->
-    <div class="write-button-container">
-      <router-link to="support/writeSupport">
-        <button @click="toggleWriteForm" class="write-button">
-          문의하기 글 작성
-        </button>
-      </router-link>
-    </div>
-
-    <div v-for="support in supportList" :key="support.supportId" class="support-item">
-      <div @click="toggle(support.supportId)" class="support-title">
-        <strong>{{ support.title }}</strong>
-        <span :class="support.status === '답변 완료' ? 'status-done' : 'status-pending'">
-          {{ support.status }}
-        </span>
-      </div>
-
-      <div v-if="openId === support.supportId" class="support-detail">
-        <p><strong>작성자:</strong> {{ support.name }}</p>
-        <p><strong>내용:</strong> {{ support.content }}</p>
-        <p><small>작성일: {{ formatDate(support.createdAt) }}</small></p>
-        <hr />
-        <div v-if="support.answer && support.answerId">
-          <p><strong>답변:</strong> {{ support.answerContent }}</p>
-          <p><small>답변일: {{ formatDate(support.answerCreatedAt) }}</small></p>
+    <div class="container p-5">
+      <div class="mx-auto" style="max-width: 600px;">
+        <div class="write-button-container">
+          <router-link to="support/writeSupport">
+            <button @click="toggleWriteForm" class="btn btn-outline-secondary w-100 write-button">
+              문의 작성
+            </button>
+          </router-link>
         </div>
-        <div v-else>
-          <em>아직 답변이 없습니다.</em>
+        <div v-for="support in supportList" :key="support.supportId" class="support-item">
+          <div class="accordion" :id="'accordion-' + support.supportId">
+            <div class="accordion-item">
+              <h5 class="accordion-header">
+                <button @click="toggle(support.supportId)" class="accordion-button" type="button" aria-expanded="true" :aria-controls="'collapse-' + support.supportId">
+                  {{ support.title }}
+                  <span class="ms-auto badge" :class="support.status === '답변 완료' ? 'text-bg-success' : 'text-bg-secondary'">
+                    {{ support.status }}
+                  </span>
+                </button>
+              </h5>
+              <div class="accordion-collapse collapse show">
+                <div class="accordion-body">
+                  <div v-if="openId === support.supportId" class="support-detail">
+                    {{ support.content }}
+                    <hr>
+                    <div v-if="support.answerId">
+                      {{ support.answerContent }}
+                    </div>
+                    <div v-else>
+                      조금만 기다려주세요.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -44,24 +52,20 @@ const toggle = (id) => {
   openId.value = openId.value === id ? null : id
 }
 
-const formatDate = (isoString) => {
-  if (!isoString) return ''
-  const date = new Date(isoString)
-  return date.toLocaleString() // 혹은 toLocaleDateString()으로 날짜만
-}
-
 onMounted(async () => {
-  const res = await fetch('/support')
+  const res = await fetch('api/support')
   const data = await res.json()
   supportList.value = data
 })
 </script>
 
 <style scoped>
+.support {
+  background-color: #F6F4EB;
+}
+
 .support-item {
-  border: 1px solid #ddd;
   padding: 12px;
-  margin-bottom: 8px;
   cursor: pointer;
 }
 
@@ -83,8 +87,40 @@ onMounted(async () => {
   margin-left: 8px;
 }
 .support-detail {
-  background: #f9f9f9;
+  background: white;
   padding: 10px;
   margin-top: 6px;
+}
+
+.accordion-button::after {
+  display: none;
+}
+
+.accordion .accordion-button {
+  background-color: #91c8e4;
+  color: black;
+  font-weight: bold;
+  transition: none;
+  box-shadow: none;
+}
+
+.accordion-item {
+  border: none;
+  background-color: white;
+  box-shadow: none;
+}
+
+.accordion-button:focus {
+  box-shadow: none;
+}
+
+.btn {
+  background-color: #4682A9;
+  border-color: #4682A9;
+  color: white;
+}
+.btn:hover {
+  background-color: #91C8E4; /* 마우스 올렸을 때 색상 */
+  border-color: #91C8E4;
 }
 </style>

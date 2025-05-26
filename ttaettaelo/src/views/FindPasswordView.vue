@@ -12,12 +12,12 @@
       <h5>비밀번호 찾기</h5>
 
       <div class="input-group mb-4">
-        <input type="text" class="form-control" v-model="loginId" :disabled="isSearched" placeholder="아이디">
+        <input type="text" class="form-control" v-model="loginId" :disabled="isSearched" placeholder="아이디" maxlength="50">
       </div>
 
       <div class="mb-4">
         <div class="input-group">
-          <input type="email" class="form-control" v-model="email" :disabled="isSearched" placeholder="이메일">
+          <input type="email" class="form-control" v-model="email" :disabled="isSearched" placeholder="이메일" maxlength="100">
         </div>
         <EmailVerification :email="email" @verified="onVerified" style="margin-top: 5px;"/>
         <p v-if="isVerified" style="color: green; font-size: 0.875rem;">이메일 인증이 완료되었습니다</p>
@@ -62,7 +62,7 @@ export default {
 
       this.isSearched = true
       try {
-        const response = await axios.post('http://localhost:8081/findPassword', {
+        const response = await axios.post('http://localhost:8081/api/findPassword', {
           loginId: this.loginId,
           email: this.email
         })

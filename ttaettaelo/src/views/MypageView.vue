@@ -11,14 +11,14 @@
 
         <div class="mb-2">
           <label>비밀번호</label>
-          <input v-model="user.password" type="password" class="form-control" @input="validatePassword">
+          <input v-model="user.password" type="password" class="form-control" @input="validatePassword" maxlength="100">
           <span v-if="lengthError" class="text-danger">{{ lengthError }}</span>
           <span v-if="formatError" class="text-danger">{{ formatError }}</span>
         </div>
 
         <div class="mb-4">
           <label>비밀번호 확인</label>
-          <input v-model="user.passwordCheck" type="password" class="form-control" @blur="checkPasswordCheck"/>
+          <input v-model="user.passwordCheck" type="password" class="form-control" @blur="checkPasswordCheck" maxlength="100">
           <div style="margin: 5px;">
             <span v-if="user.password && user.passwordCheck && user.password !== user.passwordCheck" class="text-danger">
               비밀번호가 일치하지 않습니다.
@@ -29,14 +29,14 @@
 
         <div class="mb-4">
           <label>이름</label>
-          <input v-model="user.name" type="text" class="form-control" @input="validateName">
+          <input v-model="user.name" type="text" class="form-control" @input="validateName" maxlength="6">
           <span v-if="nameLengthError" class="text-danger">이름은 최대 6자까지만 입력할 수 있습니다.</span>
           <span v-if="nameNull" class="text-danger">이름을 입력해주세요.</span>
         </div>
 
         <div class="mb-4">
           <label>이메일</label>
-          <input v-model="user.email" type="email" class="form-control" @input="checkEmailChange">
+          <input v-model="user.email" type="email" class="form-control" @input="checkEmailChange" maxlength="100">
           <div style="margin: 5px; font-size: 0.875rem;">
             <span v-if="emailChanged && !isVerified" class="text-danger">이메일 인증이 필요합니다.</span>
             <span v-if="emailChanged && isVerified" class="text-success">이메일 인증이 완료되었습니다!</span>
@@ -57,7 +57,7 @@
 
         <div class="mb-4">
           <label>주소</label>
-          <input v-model="user.address" type="text" class="form-control">
+          <input v-model="user.address" type="text" class="form-control" maxlength="255">
           <button type="button" class="btn btn-outline-secondary w-100" id="postcode" @click="openPostcode" style="margin-top: 5px;">주소 찾기</button>
         </div>
 
@@ -69,19 +69,14 @@
     </form>
 
     <form>
-      <h5>내가 좋아요한 목욕탕</h5>
-
-      <h5>내가 쓴 댓글</h5>
-    </form>
-
-      <div class="liked-posts">
-        <h3>내가 좋아요한 게시글</h3>
-        <div v-if="likedPosts.length === 0">좋아요한 게시글이 없습니다.</div>
+      <div class=" liked-posts" style="margin-bottom: 20px;">
+        <h5>내가 좋아요한 목욕탕</h5>
+        <div v-if="likedPosts.length === 0">좋아요한 목욕탕이 없습니다.</div>
         <div v-else>
-          <ul>
-            <li v-for="post in likedPosts" :key="post.bathhouseInfoId">
-              <router-link :to="{name: 'BathhouseDetailed', params: {bathhouseInfoId: post.bathhouseInfoId}}">
-                <h4>{{ post.name }}</h4>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item" v-for="post in likedPosts" :key="post.bathhouseInfoId">
+              <router-link class="mine" :to="{name: 'BathhouseDetailed', params: {bathhouseInfoId: post.bathhouseInfoId}}">
+                {{ post.name }}
               </router-link>
             </li>
           </ul>
@@ -89,52 +84,49 @@
       </div>
 
       <div class="my-reviews">
-        <h3>내가 쓴 댓글</h3>
+        <h5>내가 쓴 댓글</h5>
         <div v-if="myReviews.length === 0">내가 쓴 댓글이 없습니다.</div>
         <div v-else>
-          <ul>
-            <li v-for="review in myReviews" :key="review.reviewId">
-              <router-link :to="{name: 'BathhouseDetailed', params: {bathhouseInfoId: review.bathhouseInfoId}}">
-                <h4>{{ review.rating }}점</h4> <h4>{{ review.content }}</h4> - {{ review.name }}
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item" v-for="review in myReviews" :key="review.reviewId">
+              <router-link class="mine" :to="{name: 'BathhouseDetailed', params: {bathhouseInfoId: review.bathhouseInfoId}}">
+                {{ review.content }}({{ review.rating }}점) - {{ review.name }}
               </router-link>
             </li>
           </ul>
         </div>
       </div>
+    </form>
 
-      <!-- <button class="btn btn-danger mt-3" @click="openDeleteAccountModal">회원 탈퇴</button>
-      <div v-if="isModalVisible" class="modal-overlay">
-        <div class="modal">
-          <h3>정말 탈퇴하시겠습니까?</h3>
-          <p>이 문구를 똑같이 따라 쓰고 확인을 누르면 탈퇴됩니다.</p>
-          <div class="confirmation">
-            <input v-model="deleteConfirmationText" type="text" placeholder="정말 탈퇴하시겠습니까?" />
-            <p v-if="deleteConfirmationText !== '정말 탈퇴하시겠습니까?'" class="text-danger">문구를 정확히 입력해주세요.</p>
-          </div>
-          <div class="modal-actions">
-            <button @click="confirmDelete" :disabled="deleteConfirmationText !== '정말 탈퇴하시겠습니까?'">확인</button>
-            <button @click="closeModal">취소</button>
-          </div>
-        </div>
-      </div> -->
+    <form>
+      <button type="button" class="btn btn-outline-secondary w-100 deleted" @click="openModal" data-bs-target="#staticBackdrop">회원 탈퇴</button>
+    </form>
 
       <div>
-        <button @click="openModal">회원 탈퇴</button>
-
         <!-- 모달 창 -->
-        <div v-if="isModalVisible2" class="modal-overlay" @click.self="closeModal">
-          <div class="modal-content">
-            <h2>정말 탈퇴하시겠습니까?</h2>
-            <p>탈퇴하시기 위해 아래 문구를 따라 적어주세요.</p>
-            <p>{{ user.name }} 탈퇴합니다.</p>
+        <div class="modal" id="modal" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">회원 탈퇴</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <h5>정말 탈퇴하시겠습니까?</h5>
+                <p>아래 문구를 따라 적어주세요.</p>
+                <h5 class="text-center">{{ user.name }} 탈퇴합니다.</h5>
 
-            <input type="text" v-model="confirmationText" placeholder="탈퇴 문구를 적어주세요" />
+                <div class="delete-content">
+                  <input type="text" v-model="confirmationText" placeholder="위의 문구를 적어주세요" maxlength="150">
 
-            <div class="error-message" v-if="isError">
-              문구가 틀렸습니다. 정확히 입력해주세요.
+                  <div class="error-message" v-if="isError">
+                    문구가 틀렸습니다. 정확히 입력해주세요.
+                  </div>
+                </div>
+
+                <button class="btn btn-outline-secondary w-100" @click="confirmDeletion">확인</button>
+              </div>
             </div>
-            <button @click="confirmDeletion">확인</button>
-            <button @click="closeModal">취소</button>
           </div>
         </div>
       </div>
@@ -144,6 +136,7 @@
 <script>
 import axios from 'axios'
 import EmailVerification from '@/components/EmailVerification.vue'
+import { Modal } from 'bootstrap'
 
 export default {
   components: {
@@ -311,7 +304,7 @@ export default {
       // })
 
       try {
-        const response = await axios.put('/changeMember', {
+        const response = await axios.put('/api/changeMember', {
           memberId: this.user.memberId,
           loginId: this.user.loginId,
           name: this.user.name,
@@ -326,6 +319,8 @@ export default {
 
           const { password, passwordCheck, passwordChecked, ...userWithoutPassword } = response.data.user
           sessionStorage.setItem('user', JSON.stringify(userWithoutPassword)) // 비밀번호 제외
+
+          this.$router.push({ name: 'Home' })
         } else {
           alert('정보 업데이트에 실패했습니다.')
         }
@@ -344,7 +339,7 @@ export default {
     },
     async fetchLikedPosts () {
       try {
-        const response = await axios.get('/likedBathhouse', {
+        const response = await axios.get('/api/likedBathhouse', {
           params: {
             memberId: this.user.memberId
           }
@@ -356,7 +351,7 @@ export default {
     },
     async fetchMyReviews () {
       try {
-        const response = await axios.get('/myReviews', {
+        const response = await axios.get('/api/myReviews', {
           params: {
             memberId: this.user.memberId
           }
@@ -395,7 +390,7 @@ export default {
     },
     async changePassword () {
       try {
-        const response = await axios.put('/changePassword', {
+        const response = await axios.put('/api/changePassword', {
           loginId: this.user.loginId,
           newPassword: this.user.password
         })
@@ -441,7 +436,7 @@ export default {
     // },
     async deleteAccount () {
       try {
-        const response = await axios.post('/deleteAccount', {
+        const response = await axios.post('/api/deleteAccount', {
           memberId: this.user.memberId
         })
 
@@ -451,6 +446,7 @@ export default {
           this.$router.push({ name: 'Home' }) // 홈 화면으로
           // 세션 스토리지에서 정보 제거
           // sessionStorage.removeItem('user')
+          this.closeModal()
         } else {
           alert('탈퇴 처리 중 오류가 발생했습니다.')
         }
@@ -460,9 +456,16 @@ export default {
       }
     },
     openModal () {
-      this.isModalVisible2 = true
+      // this.isModalVisible2 = true
+      const modalElement = document.getElementById('modal')
+      const modal = new Modal(modalElement)
+      modal.show()
     },
     closeModal () {
+      const modalElement = document.getElementById('modal')
+      const modal = Modal.getInstance(modalElement) // 이미 열린 모달 인스턴스를 가져옵니다.
+      modal.hide()
+
       this.isModalVisible2 = false
       this.isError = false
       this.confirmationText = ''
@@ -551,7 +554,7 @@ form {
 
 input {
   padding: 10px;
-  margin-top: 10px;
+  margin: 10px 0 10px 0;
   width: 100%;
   border: 1px solid #ddd;
   border-radius: 5px;
@@ -559,6 +562,21 @@ input {
 
 .error-message {
   color: #dc3545;
-  margin-top: 10px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.deleted {
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+
+.delete-content {
+  margin-bottom: 30px;
+}
+
+.mine {
+  text-decoration: none;
+  color: black;
 }
 </style>

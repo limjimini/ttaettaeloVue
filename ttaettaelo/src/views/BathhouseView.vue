@@ -1,60 +1,51 @@
 <template>
   <div class="bathhouse">
-        <input type="text" v-model="searchKeyword" @keyup.enter="search" placeholder="이름, 장소 또는 태그로 검색" class="search-input" maxlength="20">
-        <button @click="search">검색</button>
-        <ul>
-            <li v-for="bathhouse in currentBathhouses" :key="bathhouse.bathhouseInfoId">
-                <router-link :to="'/bathhouse/' + bathhouse.bathhouseInfoId">{{ bathhouse.name }}</router-link>
-                <!-- <pre>{{ bathhouse }}</pre> -->
-                {{ bathhouse.type }}
-                {{ bathhouse.location }}
-                <p>리뷰 수: {{ bathhouse.reviewCount }}</p>
-                <p>평점: {{ bathhouse.avgRating }}</p>
-                <p>좋아요 수: {{ bathhouse.likeCount }}</p>
-                <div>
-                  <!-- <img :src="require('@/assets/ttaettaelo.png')" alt="목욕탕 이미지" /> -->
-                  <!-- <img :src="require('@/assets/' + bathhouse.imgUrl)" alt="목욕탕 이미지" /> -->
-                  <!-- <img :src="require('@/assets/bathhouse_' + bathhouse.id + '.png')" alt="목욕탕 이미지" /> -->
-                  <!-- <img :src="bathhouse.imgUrl ? bathhouse.imgUrl : require('@/assets/ttaettaelo.png')" alt="목욕탕 이미지" /> -->
-                  <!-- 외부 URL일 때 -->
-                  <!-- <img v-if="bathhouse.imgUrl" :src="bathhouse.imgUrl" alt="목욕탕" /> -->
+        <div id="search">
+          <div class="input-group">
+            <input v-model="searchKeyword" @keyup.enter="search" type="text" class="form-control form-control-lg search-input" aria-label="Search" aria-describedby="search-button" maxlength="30">
+            <button class="btn btn-outline-secondary" type="button" id="search-button" @click="search">
+              <i class="bi bi-search"></i>
+            </button>
+          </div>
+        </div>
 
-                  <!-- 로컬 이미지일 때 -->
-                  <!-- <img v-else :src="require('@/assets/ttaettaelo.png')" alt="목욕탕 이미지" /> -->
-
-                  <!-- <img :src="bathhouse.imgUrl && bathhouse.imgUrl !== '' ? bathhouse.imgUrl : require('@/assets/ttaettaelo.png')" alt="목욕탕 이미지" /> -->
-
-                  <!-- <img :src="bathhouse.imgUrl" @error="replace;aceByDefault"> -->
-
-                  <img v-if="bathhouse.imgUrl != null" :src="bathhouse.imgUrl" :alt="이미지" @error="$event.target.src=require('@/assets/ttaettaelo.png')">
-                  <!-- <img v-else :src="require('@/assets/ttaettaelo.png')" :alt="이미지2"> -->
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+          <div class="col d-flex justify-content-center" v-for="bathhouse in currentBathhouses" :key="bathhouse.bathhouseInfoId">
+            <router-link :to="'/bathhouse/' + bathhouse.bathhouseInfoId">
+              <div class="card" style="width: 20rem">
+                <img class="card-img-top" :src="bathhouse.imgUrl || require('@/assets/ttaettaelo.png')" :alt="이미지">
+                <div class="card-body">
+                  <h5 class="card-title">{{ bathhouse.name }}</h5>
+                  <h6 class="card-subtitle">{{ bathhouse.type }}</h6>
+                  <p class="card-text">{{ bathhouse.location }}</p>
+                  <p>리뷰 수: {{ bathhouse.reviewCount }}</p>
+                  <p>평점: {{ bathhouse.avgRating }}</p>
+                  <p>좋아요 수: {{ bathhouse.likeCount }}</p>
                 </div>
-            </li>
-        </ul>
+              </div>
+            </router-link>
+          </div>
+        </div>
 
-        <!-- 페이지네이션 -->
-        <div>
-        <!-- 페이지네이션 버튼 -->
-        <ul class="pagination" id="festivalPage">
-          <li class="page-item" :class="{ disabled: currentPage === 1 }">
-            <a class="page-link" href="javascript:void(0);" @click="handlePageChange(currentPage - 1)" aria-label="Previous">
-            <span aria-hidden="true">&laquo;</span>
-            </a>
+    <!-- 페이지네이션 -->
+    <nav aria-label="Page navigation">
+      <ul class="pagination justify-content-center" id="bathhousePage">
+        <li class="page-item" :class="{ disabled: currentPage === 1 }">
+          <a class="page-link" href="javascript:void(0);" @click="handlePageChange(currentPage - 1)" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+          </a>
         </li>
-
         <!-- 페이지 번호 버튼 -->
         <li v-for="page in pageNumbers" :key="page" :class="{ active: currentPage === page }" class="page-item">
           <a class="page-link" href="javascript:void(0);" @click="handlePageChange(page)">{{ page }}</a>
         </li>
-
         <li class="page-item" :class="{ disabled: currentPage === totalPages }">
           <a class="page-link" href="javascript:void(0);" @click="handlePageChange(currentPage + 1)" aria-label="Next">
           <span aria-hidden="true">&raquo;</span>
           </a>
         </li>
       </ul>
-
-    </div>
+    </nav>
   </div>
 </template>
 
@@ -117,7 +108,7 @@ export default {
   methods: {
     async getAllBathhouseInfo () {
       try {
-        const response = await axios.get('http://localhost:8081/bathhouse')
+        const response = await axios.get('http://localhost:8081/api/bathhouse')
         this.bathhouses = response.data
         this.filteredBathhouses = this.bathhouses // 초기화
       } catch (error) {
@@ -147,15 +138,51 @@ export default {
 </script>
 
 <style scoped>
-/* 페이지네이션 버튼 스타일 */
+.bathhouse {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #F6F4EB;
+}
+
+#search {
+  width: 100%;
+  max-width: 500px;
+  margin: 20px auto 10px auto;
+}
+
+#search input:focus {
+  outline: none;
+  box-shadow: none;
+  transform: none;
+  border: 2px solid #4682A9;
+}
+
+#search input {
+  transition: none; /* 포커스 크기 변화 방지 */
+  box-sizing: border-box; /* 테두리 포함하여 크기 계산 */
+  margin: 0;
+}
+
+#search-button {
+  background-color: #4682A9;
+  border-color: #4682A9;
+}
+
+.bi-search {
+  color: white;
+}
+
+.input-group {
+  border-radius: 50px;
+  padding: 10px;
+}
+
 .pagination {
   display: flex;
   list-style-type: none;
   padding: 0;
-  margin: 0;
-}
-.page-item {
-  margin: 0 5px;
+  margin: 10px 0 20px 0;
 }
 .page-item.disabled .page-link {
   pointer-events: none;
@@ -163,11 +190,40 @@ export default {
 }
 .page-item.active .page-link {
   font-weight: bold;
+  background-color: #4682A9;
+  border-color: #4682A9;
+}
+
+.page-link {
+  color: #4682A9;
 }
 .search-input {
   width: 100%;
   padding: 8px;
   margin-bottom: 16px;
   font-size: 16px;
+}
+
+.card-img-top {
+  height: 200px;
+  object-fit: cover;
+}
+
+.card {
+  margin: 10px 20px;
+}
+
+a {
+  text-decoration: none;
+}
+
+.card-title {
+  margin-bottom: 12px;
+  font-weight: bold;
+}
+
+.card-subtitle {
+  margin-bottom: 12px;
+  color: gray;
 }
 </style>

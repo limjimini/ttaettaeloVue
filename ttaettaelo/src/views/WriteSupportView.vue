@@ -5,17 +5,17 @@
 
       <div class="input-group mb-4">
         <label for="memberName" class="form-label">작성자</label>
-        <input class="form-control w-100" type="text" v-model="memberName" id="memberName" readonly />
+        <input class="form-control w-100" type="text" v-model="memberName" id="memberName" readonly>
       </div>
 
       <div class="input-group mb-4">
         <label for="title" class="form-label">제목</label>
-        <input class="form-control w-100" type="text" v-model="newSupport.title" id="title" required />
+        <input class="form-control w-100" type="text" v-model="newSupport.title" id="title" required maxlength="100">
       </div>
 
       <div class="input-group mb-4">
         <label for="content" class="form-label">내용</label>
-        <textarea class="form-control w-100" v-model="newSupport.content" id="content" required></textarea>
+        <textarea class="form-control w-100" v-model="newSupport.content" id="content" required maxlength="255"></textarea>
       </div>
 
       <div>
@@ -64,7 +64,7 @@ export default {
 
       // 글 작성 요청 보내기 (서버로)
       axios
-        .post('http://localhost:8081/support/submit', supportData)
+        .post('http://localhost:8081/api/support/submit', supportData)
         .then(response => {
           console.log('문의글 작성 성공', response.data)
           this.$router.push({ name: 'Support' })

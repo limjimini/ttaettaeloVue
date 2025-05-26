@@ -10,11 +10,11 @@
       </div>
 
       <div class="input-group mb-4">
-        <input class="form-control" type="text" name="loginId" id="loginId" v-model="loginId" placeholder="아이디" required>
+        <input class="form-control" type="text" name="loginId" id="loginId" v-model="loginId" placeholder="아이디" required maxlength="50">
       </div>
 
       <div class="input-group mb-4">
-        <input class="form-control" type="password" name="password" id="password" v-model="password" placeholder="비밀번호" required>
+        <input class="form-control" type="password" name="password" id="password" v-model="password" placeholder="비밀번호" required maxlength="100">
       </div>
 
       <button class="btn btn-outline-secondary w-100" type="submit">로그인</button>
@@ -42,7 +42,7 @@ export default {
   methods: {
     async submitForm () {
       try {
-        const response = await axios.post('http://localhost:8081/login', {
+        const response = await axios.post('http://localhost:8081/api/login', {
           loginId: this.loginId,
           password: this.password
         })

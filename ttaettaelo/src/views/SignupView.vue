@@ -11,7 +11,7 @@
 
           <div class="mb-4">
             <div class="input-group">
-              <input type="text" id="loginId" class="form-control" v-model="loginId" placeholder="아이디" @blur="loginIdTouched = true" required>
+              <input type="text" id="loginId" class="form-control" v-model="loginId" placeholder="아이디" @blur="loginIdTouched = true" required maxlength="50">
               <button class="btn btn-outline-secondary" type="button" @click="checkLoginId">중복 확인</button>
             </div>
             <div class="error">
@@ -22,7 +22,7 @@
 
           <div class="mb-4">
             <div class="input-group">
-              <input type="password" id="password" class="form-control" v-model="password" @input="validatePassword" placeholder="비밀번호" @blur="passwordTouched = true" required>
+              <input type="password" id="password" class="form-control" v-model="password" @input="validatePassword" placeholder="비밀번호" @blur="passwordTouched = true" required maxlength="100">
             </div>
             <div class="error">
               <p v-if="!password && passwordTouched" class="text-danger">필수 입력입니다.</p>
@@ -33,7 +33,7 @@
 
           <div class="mb-4">
             <div class="input-group">
-              <input type="password" id="passwordCheck" class="form-control" v-model="passwordCheck" placeholder="비밀번호 확인" @blur="passwordCheckTouched = true" required>
+              <input type="password" id="passwordCheck" class="form-control" v-model="passwordCheck" placeholder="비밀번호 확인" @blur="passwordCheckTouched = true" required maxlength="100">
             </div>
             <div class="error">
               <p v-if="!passwordCheck && passwordCheckTouched" class="text-danger">필수 입력입니다.</p>
@@ -57,18 +57,18 @@
 
           <div class="mb-4">
             <div class="input-group">
-              <input type="email" id="email" class="form-control" v-model="email" placeholder="이메일" :disabled="isVerified" @blur="emailTouched = true" required>
+              <input type="email" id="email" class="form-control" v-model="email" placeholder="이메일" :disabled="isVerified" @blur="emailTouched = true" required maxlength="100">
             </div>
             <div class="error">
               <p v-if="!email && emailTouched" class="text-danger">필수 입력입니다.</p>
               <EmailVerification :email="email" @verified="handleVerification" />
-              <p v-if="!isVerified" class="text-danger">이메일 인증을 완료해야 회원가입할 수 있습니다.</p>
+              <p v-if="!isVerified && emailTouched" class="text-danger">이메일 인증을 완료해야 회원가입할 수 있습니다.</p>
             </div>
           </div>
 
           <div class="mb-4">
             <div class="input-group">
-              <input type="text" id="address" class="form-control" v-model="address" placeholder="주소(선택)">
+              <input type="text" id="address" class="form-control" v-model="address" placeholder="주소(선택)" maxlength="255">
               <button class="btn btn-outline-secondary" id="postcode" @click="openPostcode">주소 찾기</button>
             </div>
           </div>
@@ -87,9 +87,6 @@
                 <label class="btn btn-outline-secondary secret-btn" for="secret">비밀</label>
               </div>
             </div>
-            <!-- <div class="error">
-              <p v-if="!gender" class="text-danger">필수 선택입니다.</p>
-            </div> -->
           </div>
 
           <button class="btn btn-outline-secondary w-100" type="submit" :disabled="!isVerified || !loginId || !password || !passwordCheck || !name || !email || !gender || !isAvailable">가입하기</button>
@@ -146,7 +143,7 @@ export default {
       }
 
       // Spring Boot 서버로 POST 요청
-      axios.post('http://localhost:8081/signUp', memberData)
+      axios.post('http://localhost:8081/api/signUp', memberData)
         .then(response => {
           console.log('회원가입 성공:', response)
           // 회원가입 성공 후 Login.vue로
@@ -164,7 +161,7 @@ export default {
         return
       }
 
-      axios.get('http://localhost:8081/checkLoginId', {
+      axios.get('http://localhost:8081/api/checkLoginId', {
         params: { loginId: this.loginId }
       })
         .then(response => {

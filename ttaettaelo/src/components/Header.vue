@@ -94,7 +94,7 @@ export default {
     async logout () {
       try {
         // 로그아웃 요청을 서버에 보냄
-        await axios.post('http://localhost:8081/logout', {}, { maxRedirects: 0 })
+        await axios.post('http://localhost:8081/api/logout', {}, { maxRedirects: 0 })
 
         this.$store.dispatch('logout')
         this.$router.push({ name: 'Home' })

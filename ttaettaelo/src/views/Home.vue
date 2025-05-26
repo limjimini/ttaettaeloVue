@@ -60,13 +60,11 @@ export default {
   },
   methods: {
     goToBathhouseSearch () {
-      if (this.searchKeyword?.trim()) {
-        this.$router.push({ path: '/bathhouse', query: { keyword: this.searchKeyword } })
-      }
+      this.$router.push({ path: '/bathhouse', query: { keyword: this.searchKeyword } })
     },
     async fetchImages () {
       try {
-        const response = await axios.get('/randomImages')
+        const response = await axios.get('/api/randomImages')
         this.images = response.data
       } catch (error) {
         console.error('내가 쓴 댓글을 불러오지 못했습니다.', error)
