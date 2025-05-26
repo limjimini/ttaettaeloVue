@@ -69,7 +69,7 @@
           <div class="mb-4">
             <div class="input-group">
               <input type="text" id="address" class="form-control" v-model="address" placeholder="주소(선택)" maxlength="255">
-              <button class="btn btn-outline-secondary" id="postcode" @click="openPostcode">주소 찾기</button>
+              <button type="button" class="btn btn-outline-secondary" id="postcode" @click="openPostcode">주소 찾기</button>
             </div>
           </div>
 
