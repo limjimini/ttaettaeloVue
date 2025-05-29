@@ -19,7 +19,7 @@
             <div class="card-body">
               <h2 class="card-title">{{ bathhouse.name }}</h2>
               <p class="card-text text-muted mb-2">{{ bathhouse.type }}</p>
-              <p class="card-text">{{ bathhouse.introduction }}</p>
+              <p class="card-text" v-html="formattedIntroduction"></p>
 
               <ul class="list-group list-group-flush mt-3">
                 <li class="list-group-item">
@@ -105,7 +105,15 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['isLoggedIn'])
+    ...mapGetters(['isLoggedIn']),
+    formattedIntroduction () {
+      if (!this.bathhouse?.introduction) return ''
+
+      const parser = new DOMParser()
+      const decoded = parser.parseFromString(this.bathhouse.introduction, 'text/html').body.textContent
+
+      return decoded.replace(/\n/g, '<br>')
+    }
   },
   async mounted () {
     await this.getBathhouseDetailed()

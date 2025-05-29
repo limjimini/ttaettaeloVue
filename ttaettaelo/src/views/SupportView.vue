@@ -43,7 +43,16 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import axios from 'axios'
+import { useStore } from 'vuex'
+import { ref, onMounted, computed } from 'vue'
+
+const store = useStore()
+const user = computed(() => store.getters.getUser)
+const userId = computed(() => store.getters.loggedInuserId)
+
+console.log(user.value)
+console.log(userId.value)
 
 const supportList = ref([])
 const openId = ref(null)
@@ -53,9 +62,12 @@ const toggle = (id) => {
 }
 
 onMounted(async () => {
-  const res = await fetch('api/support')
-  const data = await res.json()
-  supportList.value = data
+  try {
+    const { data } = await axios.get('/api/support')
+    supportList.value = data
+  } catch (error) {
+    console.error('에러 발생:', error)
+  }
 })
 </script>
 
