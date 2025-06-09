@@ -1,6 +1,7 @@
 <template>
   <div class="findId" @submit.prevent="findId">
     <form>
+      <!-- 로고 -->
       <div class="logo">
         <a href="/">
           <span style="color: #43C344;">때</span>
@@ -11,20 +12,24 @@
 
       <h5>아이디 찾기</h5>
 
+      <!-- 이름 -->
       <div class="input-group mb-4">
         <input type="text" class="form-control" :disabled="isSearched" v-model="name" placeholder="이름" maxlength="6">
       </div>
 
+      <!-- 이메일 -->
       <div class="mb-4">
         <div class="input-group">
           <input type="email" class="form-control" :disabled="isSearched" v-model="email" placeholder="이메일" maxlength="100">
         </div>
         <EmailVerification :email="email" @verified="onVerified" style="margin-top: 5px;"/>
+        <!-- 이메일 인증이 완료되면 -->
         <p v-if="isVerified" style="color: green; font-size: 0.875rem;">이메일 인증이 완료되었습니다</p>
       </div>
 
       <button class="btn btn-outline-secondary w-100" :disabled="!isVerified" type="submit">아이디 찾기</button>
 
+      <!-- 아이디 찾기 결과 -->
       <div class="mt-3 knowId">
         <p v-if="isSearched && foundId">당신의 아이디는 <strong>{{ foundId }}</strong>입니다.</p>
         <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
@@ -38,40 +43,36 @@ import axios from 'axios'
 import EmailVerification from '../components/EmailVerification.vue'
 
 export default {
-  name: 'FindId',
   components: {
     EmailVerification
   },
   data () {
     return {
-      name: '',
-      email: '',
-      foundId: null,
-      isVerified: false,
-      errorMessage: '',
-      isSearched: false,
-      emailError: ''
+      name: '', // 이름
+      email: '', // 이메일
+      foundId: null, // 찾은 아이디
+      isVerified: false, // 이메일 인증 확인
+      errorMessage: '', // 오류 메시지
+      isSearched: false // 검색 여부
     }
   },
   methods: {
-    onVerified () {
+    onVerified () { // 이메일 인증이 완료되면
       this.isVerified = true
     },
-    async findId () {
+    async findId () { // 아이디 찾기
       try {
-        // 백엔드에 이름과 이메일을 보내서 아이디 찾기
+        // 이름과 이메일로 아이디 찾기를 위해 서버에 POST 요청
         const response = await axios.post('http://localhost:8081/api/findId', {
           name: this.name,
           email: this.email
         })
 
-        this.isSearched = true
+        this.isSearched = true // 아이디 찾기 완료
 
-        // 아이디가 있으면 아이디를 반환
-        if (response.data.success) {
+        if (response.data.success) { // 아이디가 있으면 아이디를 반환
           this.foundId = response.data.loginId
-        } else {
-          // 아이디를 찾을 수 없을 경우
+        } else { // 아이디를 찾을 수 없을 경우
           this.foundId = null
           this.errorMessage = response.data.message
         }
@@ -79,6 +80,7 @@ export default {
         this.foundId = null
         this.isSearched = true
 
+        // 아이디 찾기 오류 메시지
         if (error.response?.data?.message) {
           this.errorMessage = error.response.data.message
         } else {
@@ -95,9 +97,8 @@ export default {
   background-color: #F6F4EB;
   height: 100vh; /* 화면 전체 높이 */
   display: flex;
-  justify-content: center; /* 가로 중앙 */
-  align-items: center;
-  justify-content: center;
+  justify-content: center; /* 가로 중앙 정렬 */
+  align-items: center; /* 세로 중앙 정렬 */
 }
 
 form {
@@ -110,7 +111,7 @@ form {
   border: 5px solid #4682A9;
 }
 
-.input-group input:focus {
+.input-group input:focus { /* 입력창 눌렀을 때 */
   outline: none;
   box-shadow: none;
   transform: none;

@@ -1,6 +1,7 @@
 <template>
     <div class="signUp">
         <form @submit.prevent="submitForm">
+          <!-- 로고 -->
           <div class="logo">
             <a href="/">
               <span style="color: #43C344;">때</span>
@@ -9,63 +10,81 @@
             </a>
           </div>
 
+          <!-- 아이디 -->
           <div class="mb-4">
             <div class="input-group">
               <input type="text" id="loginId" class="form-control" v-model="loginId" placeholder="아이디" @blur="loginIdTouched = true" required maxlength="50">
               <button class="btn btn-outline-secondary" type="button" @click="checkLoginId">중복 확인</button>
             </div>
             <div class="error">
+              <!-- 아이디 중복 결과 메시지 -->
               <p v-if="checkMessage" :style="{color: isAvailable ? 'green' : '#dc3545'}">{{ checkMessage }}</p>
+              <!-- 필수 입력 메시지 -->
               <p v-if="!loginId && loginIdTouched" class="text-danger">필수 입력입니다.</p>
             </div>
           </div>
 
+          <!-- 비밀번호 -->
           <div class="mb-4">
             <div class="input-group">
               <input type="password" id="password" class="form-control" v-model="password" @input="validatePassword" placeholder="비밀번호" @blur="passwordTouched = true" required maxlength="100">
             </div>
             <div class="error">
+              <!-- 필수 입력 메시지 -->
               <p v-if="!password && passwordTouched" class="text-danger">필수 입력입니다.</p>
+              <!-- 길이 오류 메시지 -->
               <p v-if="lengthError" class="text-danger">{{ lengthError }}</p>
+              <!-- 비밀번호 형식 오류 메시지 -->
               <p v-if="formatError" class="text-danger">{{ formatError }}</p>
             </div>
           </div>
 
+          <!-- 비밀번호 확인 -->
           <div class="mb-4">
             <div class="input-group">
               <input type="password" id="passwordCheck" class="form-control" v-model="passwordCheck" placeholder="비밀번호 확인" @blur="passwordCheckTouched = true" required maxlength="100">
             </div>
             <div class="error">
+              <!-- 필수 입력 메시지 -->
               <p v-if="!passwordCheck && passwordCheckTouched" class="text-danger">필수 입력입니다.</p>
+              <!-- 비밀번호 확인 불일치 -->
               <p v-if="password !== passwordCheck" class="text-danger">
                 비밀번호가 일치하지 않습니다.
               </p>
             </div>
           </div>
 
+          <!-- 이름 -->
           <div class="mb-4">
             <div class="input-group">
               <input type="text" id="name" class="form-control" v-model="name" placeholder="이름" maxlength="6" @input="validateName" @blur="nameTouched = true" required>
             </div>
             <div class="error">
+              <!-- 필수 입력 메시지 -->
               <p v-if="!name && nameTouched" class="text-danger">필수 입력입니다.</p>
+              <!-- 이름 입력 길이 초과 메시지 -->
               <p v-if="name && name.length > 6" class="text-danger">
                 이름은 최대 6자까지 입력 가능합니다.
               </p>
             </div>
           </div>
 
+          <!-- 이메일 인증 -->
           <div class="mb-4">
             <div class="input-group">
+              <!-- 인증 완료 시 이메일 수정 불가 -->
               <input type="email" id="email" class="form-control" v-model="email" placeholder="이메일" :disabled="isVerified" @blur="emailTouched = true" required maxlength="100">
             </div>
             <div class="error">
+              <!-- 필수 입력 메시지 -->
               <p v-if="!email && emailTouched" class="text-danger">필수 입력입니다.</p>
               <EmailVerification :email="email" @verified="handleVerification" />
+              <!-- 인증 필수 메시지 -->
               <p v-if="!isVerified && emailTouched" class="text-danger">이메일 인증을 완료해야 회원가입할 수 있습니다.</p>
             </div>
           </div>
 
+          <!-- 주소 찾기 -->
           <div class="mb-4">
             <div class="input-group">
               <input type="text" id="address" class="form-control" v-model="address" placeholder="주소(선택)" maxlength="255">
@@ -73,6 +92,7 @@
             </div>
           </div>
 
+          <!-- 성별 -->
           <div class="mb-4">
             <div class="input-group">
               <input type="text" id="gender" class="form-control" placeholder="* 성별(필수)" disabled>
@@ -89,6 +109,7 @@
             </div>
           </div>
 
+          <!-- 모든 검사가 통과되면 제출 가입하기 버튼 활성화 -->
           <button class="btn btn-outline-secondary w-100" type="submit" :disabled="!isVerified || !loginId || !password || !passwordCheck || !name || !email || !gender || !isAvailable">가입하기</button>
         </form>
     </div>
@@ -102,35 +123,29 @@ export default {
   components: {
     EmailVerification
   },
-  name: 'SignupForm',
   data () {
     return {
-      loginId: '',
-      loginIdTouched: false,
-      checkMessage: '',
-      isAvailable: false,
-      password: '',
-      passwordTouched: false,
-      lengthError: '',
-      formatError: '',
-      passwordCheck: '',
-      passwordCheckTouched: false,
-      name: '',
-      nameTouched: false,
-      email: '',
-      emailTouched: false,
-      isVerified: false,
-      address: '',
-      gender: ''
+      loginId: '', // 아이디
+      loginIdTouched: false, // 아이디 입력창 클릭했는지 확인
+      checkMessage: '', // 아이디 중복확인 메시지
+      isAvailable: false, // 아이디 사용 가능 여부
+      password: '', // 비밀번호
+      passwordTouched: false, // 비밀번호 입력창 클릭했는지 확인
+      lengthError: '', // 비밀번호 길이 오류 메시지
+      formatError: '', // 비밀번호 형식 오류 메시지
+      passwordCheck: '', // 비밀번호 확인
+      passwordCheckTouched: false, // 비밀번호 확인 클릭했는지 확인
+      name: '', // 이름
+      nameTouched: false, // 이름 클릭했는지 확인
+      email: '', // 이메일
+      emailTouched: false, // 이메일 클릭했는지 확인
+      isVerified: false, // 이메일 인증 여부
+      address: '', // 주소
+      gender: '' // 성별
     }
   },
   methods: {
-    submitForm () {
-      // if (!this.isVerified || !this.loginId || !this.password || !this.passwordCheck || !this.name || !this.email || !this.gender) {
-      //   alert('모든 필수 정보를 입력하고 이메일 인증을 완료해주세요.')
-      //   return // 여기서 멈추기!
-      // }
-
+    submitForm () { // 회원가입 제출
       const memberData = {
         loginId: this.loginId,
         password: this.password,
@@ -142,33 +157,32 @@ export default {
         gender: this.gender
       }
 
-      // Spring Boot 서버로 POST 요청
+      // 회원가입을 위해 서버에 POST 요청
       axios.post('http://localhost:8081/api/signUp', memberData)
         .then(response => {
           console.log('회원가입 성공:', response)
-          // 회원가입 성공 후 Login.vue로
-          this.$router.push({ name: 'Login' })
+          this.$router.push({ name: 'Login' }) // 로그인 페이지로
         })
         .catch(error => {
           console.error('회원가입 실패:', error.response ? error.response.data : error)
         })
     },
-    checkLoginId () {
-      // 아이디가 비어있는지 체크
-      if (!this.loginId) {
+    checkLoginId () { // 아이디 중복 확인
+      if (!this.loginId) { // 아이디가 비어있는지 체크
         this.checkMessage = '아이디를 입력해주세요.'
         this.isAvailable = false
         return
       }
 
+      // 아이디 중복 확인을 위해 서버에 GET 요청
       axios.get('http://localhost:8081/api/checkLoginId', {
         params: { loginId: this.loginId }
       })
         .then(response => {
-          if (response.data === 'duplicate') {
+          if (response.data === 'duplicate') { // 아이디 중복이라면
             this.checkMessage = '이미 사용 중인 아이디입니다.'
             this.isAvailable = false
-          } else {
+          } else { // 중복이 아니면
             this.checkMessage = '사용 가능한 아이디입니다.'
             this.isAvailable = true
           }
@@ -177,33 +191,33 @@ export default {
           console.error(error)
         })
     },
-    validatePassword () {
-      if (this.password.length < 8 || this.password.length > 20) {
+    validatePassword () { // 비밀번호 유효성 검사
+      if (this.password.length < 8 || this.password.length > 20) { // 비밀번호 길이 검사
         this.lengthError = '비밀번호는 8~20자로 입력해주세요.'
       } else {
         this.lengthError = ''
       }
 
       const passwordPattern = /^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\W)(?=\S+$).+$/
-      if (!passwordPattern.test(this.password)) {
+      if (!passwordPattern.test(this.password)) { // 비밀번호 형식 검사
         this.formatError = '비밀번호는 영문대소문자, 숫자, 특수문자를 사용해주세요.'
       } else {
         this.formatError = ''
       }
     },
-    validateName () {
-      if (this.name.length > 6) {
-        this.name = this.name.slice(0, 6)
+    validateName () { // 이름 유효성 검사
+      if (this.name.length > 6) { // 이름 입력 글자 6자리 초과하면
+        this.name = this.name.slice(0, 6) // 자르기
       }
     },
-    openPostcode () {
+    openPostcode () { // 다음 주소 찾기
       new window.daum.Postcode({
         oncomplete: (data) => {
           this.address = data.address
         }
       }).open()
     },
-    handleVerification () {
+    handleVerification () { // 이메일 인증 여부
       this.isVerified = true
     }
   }
@@ -215,7 +229,7 @@ export default {
   background-color: #F6F4EB;
   padding: 40px 20px;
   display: flex;
-  justify-content: center;
+  justify-content: center; /* 중앙 정렬 */
 }
 
 form {
@@ -228,7 +242,7 @@ form {
   border: 5px solid #4682A9;
 }
 
-.input-group input:focus {
+.input-group input:focus { /* 입력창 클릭했을 때 */
   outline: none;
   box-shadow: none;
   transform: none;
@@ -251,7 +265,7 @@ form {
   color: white;
 }
 
-.error {
+.error { /* 오류 메시지 */
   margin-top: 5px;
 }
 .error p {
@@ -266,6 +280,7 @@ form {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }
+
 .input-group .btn:hover {
   background-color: #91C8E4; /* 마우스 올렸을 때 색상 */
   border-color: #91C8E4;

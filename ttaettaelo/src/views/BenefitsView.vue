@@ -22,7 +22,6 @@
 
 <script>
 export default {
-  name: 'BathhouseBenefits',
   data () {
     return {
       benefits: [

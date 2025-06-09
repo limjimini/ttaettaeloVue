@@ -36,21 +36,25 @@ export default {
     }
   },
   watch: {
-    // 라우트의 변경을 감지하여 body 클래스 변경
-    '$route' (to) {
+    '$route' (to) { // 라우트의 변경을 감지하여 body 클래스 변경
       if (to.name === 'SignUp') {
-        document.body.classList.add('signup-page') // 회원가입 페이지일 때 클래스 추가
+        // 회원가입 페이지일 때 클래스 추가
+        document.body.classList.add('signup-page')
       } else if (to.name === 'Login') {
-        document.body.classList.add('login-page') // 로그인인 페이지일 때 클래스 추가
+        // 로그인인 페이지일 때 클래스 추가
+        document.body.classList.add('login-page')
       } else if (to.name === 'FindId') {
-        document.body.classList.add('findId-page') // 아이디 찾기 페이지일 때 클래스 추가
+        // 아이디 찾기 페이지일 때 클래스 추가
+        document.body.classList.add('findId-page')
       } else if (to.name === 'FindPassword') {
-        document.body.classList.add('findPassword-page') // 비밀번호 찾기기 페이지일 때 클래스 추가
+        // 비밀번호 찾기기 페이지일 때 클래스 추가
+        document.body.classList.add('findPassword-page')
       } else {
-        document.body.classList.remove('signup-page') // 다른 페이지일 때 클래스 제거
-        document.body.classList.remove('login-page') // 다른 페이지일 때 클래스 제거
-        document.body.classList.remove('findId-page') // 다른 페이지일 때 클래스 제거
-        document.body.classList.remove('findPassword-page') // 다른 페이지일 때 클래스 제거
+        // 다른 페이지일 때 클래스 제거
+        document.body.classList.remove('signup-page')
+        document.body.classList.remove('login-page')
+        document.body.classList.remove('findId-page')
+        document.body.classList.remove('findPassword-page')
       }
     }
   },
@@ -67,9 +71,9 @@ export default {
     }
   },
   methods: {
-    // 로그아웃 처리
-    logout () {
+    logout () { // 로그아웃 처리
       this.isLoggedIn = false
+
       // 로그아웃 API 호출
       this.$axios.get('http://localhost:8081/logout')
         .then(() => {
@@ -80,9 +84,7 @@ export default {
           console.error('로그아웃 오류', error)
         })
     },
-    // 로그인 성공 시 호출
-    setLoginStatus (status) {
-      console.log('제발 좀 나타나줘')
+    setLoginStatus (status) { // 로그인 성공 시
       console.log(status)
       this.isLoggedIn = status
     }
@@ -93,14 +95,15 @@ export default {
 <style>
 #app {
   display: flex;
-  flex-direction: column;
+  flex-direction: column; /* 세로 방향으로 배치 */
   min-height: 100vh;
 }
 
 .main {
-  flex: 1;
+  flex: 1; /* 남은 공간 모두 차지하도록 설정 */
 }
 
+/* header, footer 숨기기 */
 body.signup-page header,
 body.signup-page footer {
   display: none;
@@ -108,6 +111,16 @@ body.signup-page footer {
 
 body.login-page header,
 body.login-page footer {
+  display: none;
+}
+
+body.findId-page header,
+body.findId-page footer {
+  display: none;
+}
+
+body.findPassword-page header,
+body.findPassword-page footer {
   display: none;
 }
 </style>

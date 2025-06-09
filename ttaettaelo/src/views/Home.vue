@@ -6,8 +6,7 @@
             <!-- 이미지 출력 -->
             <div v-for="(image, index) in images"
               :key="index" class="carousel-item"
-              :class="{'active': index === 0}"
-            >
+              :class="{'active': index === 0}">
               <img :src="image" class="d-block w-100 carousel-img" alt="목욕탕">
             </div>
           </div>
@@ -24,6 +23,7 @@
             <span class="visually-hidden">Next</span>
           </button>
 
+          <!-- 인디케이터 버튼튼 -->
           <div class="carousel-indicators">
             <button v-for="(image, index) in images" :key="index"
               :data-bs-target="'#home-carousel'"
@@ -37,7 +37,9 @@
         <!-- 검색창 -->
         <div id="search-home">
           <div class="input-group mb-3">
-            <input v-model="searchKeyword" @keyup.enter="goToBathhouseSearch" type="text" class="form-control form-control-lg" aria-label="Search" aria-describedby="search-button" maxlength="30">
+            <input v-model="searchKeyword" @keyup.enter="goToBathhouseSearch"
+              type="text" class="form-control form-control-lg"
+              aria-label="Search" aria-describedby="search-button" maxlength="30">
             <button class="btn btn-outline-secondary" type="button" id="search-button" @click="goToBathhouseSearch">
               <i class="bi bi-search"></i>
             </button>
@@ -52,22 +54,22 @@ import axios from 'axios'
 export default {
   data () {
     return {
-      images: [] // 랜덤 이미지 리리스트
+      images: [] // 랜덤 이미지 리스트
     }
   },
   created () {
-    this.fetchImages()
+    this.fetchImages() // 이미지 가져오기
   },
   methods: {
-    goToBathhouseSearch () {
+    goToBathhouseSearch () { // 검색
       this.$router.push({ path: '/bathhouse', query: { keyword: this.searchKeyword } })
     },
-    async fetchImages () {
+    async fetchImages () { // 이미지 가져오기
       try {
         const response = await axios.get('/api/randomImages')
         this.images = response.data
       } catch (error) {
-        console.error('내가 쓴 댓글을 불러오지 못했습니다.', error)
+        console.error('이미지를 불러오지 못했습니다.', error)
       }
     }
   }
@@ -77,9 +79,9 @@ export default {
 <style scoped>
 .home {
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+  display: flex; /* 세로 정렬을 위해 flex 사용 */
+  flex-direction: column; /* 세로 방향으로 배치 */
+  justify-content: flex-start; /* 위쪽부터 정렬 */
   padding: 0;
   margin: 0;
   position: relative;
@@ -88,21 +90,21 @@ export default {
 .carousel-img {
   width: 100%;
   height: 80vh;
-  object-fit: cover;
+  object-fit: cover; /* 이미지 비율 유지하면서 채우기 */
   margin: 0;
   padding: 0 auto;
   display: block;
-  object-position: center center;
+  object-position: center center; /* 이미지의 중심을 가운데로 */
 }
 
-/* 태블릿*/
+/* 태블릿 */
 @media (max-width: 992px) {
   .carousel-img {
     height: 70vh;
   }
 }
 
-/* 모바일*/
+/* 모바일 */
 @media (max-width: 768px) {
   .carousel-img {
     height: 65vh;
@@ -112,20 +114,18 @@ export default {
 #search-home {
   position: absolute;
   top: 30%; /* 중간보다 살짝 위 */
-  left: 50%; /* 가로 중앙앙 */
+  left: 50%; /* 가로 중앙  정렬 */
   transform: translateX(-50%); /* 정확하게 중앙에 위치 */
   z-index: 10; /* 이미지 위에 위치 */
   width: 100%;
   max-width: 500px;
 }
-
-#search-home input:focus {
+#search-home input:focus { /* 입력창 눌렀을 때 */
   outline: none;
   box-shadow: none;
   transform: none;
   border: 2px solid #4682A9;
 }
-
 #search-home input {
   transition: none; /* 포커스 크기 변화 방지 */
   box-sizing: border-box; /* 테두리 포함하여 크기 계산 */

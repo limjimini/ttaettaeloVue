@@ -60,7 +60,7 @@
         </div>
       </div>
 
-      <!-- 리뷰 섹션 -->
+      <!-- 리뷰 영역 -->
       <div class="mt-5 review-section">
         <div class="card p-4">
           <div v-if="!isLoggedIn" class="alert alert-info text-center">
@@ -98,52 +98,35 @@ export default {
   props: ['bathhouseInfoId'],
   data  () {
     return {
-      bathhouse: null, // 상세 정보를 저장할 변수
-      reviews: [],
-      likeCount: 0,
-      like: false
+      bathhouse: null, // 상세 정보를 저장할 목욕탕 변수
+      reviews: [], // 리뷰 목록
+      likeCount: 0, // 좋아요 수
+      like: false // 좋아요 상태
     }
   },
   computed: {
-    ...mapGetters(['isLoggedIn']),
-    formattedIntroduction () {
+    ...mapGetters(['isLoggedIn']), // Vuex에서 로그인 상태 가져오기
+    formattedIntroduction () { // 줄바꿈 제대로
       if (!this.bathhouse?.introduction) return ''
 
       const parser = new DOMParser()
       const decoded = parser.parseFromString(this.bathhouse.introduction, 'text/html').body.textContent
-
-      return decoded.replace(/\n/g, '<br>')
+      return decoded.replace(/\n/g, '<br>') // 줄바꿈을 br 태그로 변경
     }
   },
   async mounted () {
-    await this.getBathhouseDetailed()
-    await this.fetchLikeCount()
-    console.log('bathhouse 정보 로딩 완료:', this.bathhouse)
-    console.log('bathhouse 정보 로딩 완료:', this.bathhouse.bathhouseInfoId)
+    await this.getBathhouseDetailed() // 목욕탕 상세 정보 가져오기
+    await this.fetchLikeCount() // 좋아요 수 가져오기
+
+    // console.log('bathhouse 정보 로딩 완료:', this.bathhouse)
+    // console.log('bathhouse 정보 로딩 완료:', this.bathhouse.bathhouseInfoId)
+
     if (this.bathhouse && this.bathhouse.bathhouseInfoId) {
-      await this.fetchReviews() // 그 다음에야 리뷰 요청
+      await this.fetchReviews() // 리뷰 가져오기
     }
   },
-  // mounted () {
-  //   console.log('현재 라우트 정보:', this.$route)
-  //   console.log('받은 bathhouseInfoId:', this.$route.params.bathhouseInfoId)
-  // },
-  // watch: {
-  //   bathhouse (newVal) {
-  //     if (newVal && typeof newVal.businessHours === 'string') {
-  //       try {
-  //         const parsed = JSON.parse(newVal.businessHours)
-  //         if (typeof parsed === 'object') {
-  //           this.bathhouse.businessHours = parsed
-  //         }
-  //       } catch (e) {
-  //         console.error('businessHours JSON 파싱 실패:', e)
-  //       }
-  //     }
-  //   }
-  // },
   watch: {
-    bathhouseInfoId: {
+    bathhouseInfoId: { // 변경되면 다시 가져오기
       immediate: true,
       handler (newId) {
         if (newId) {
@@ -153,34 +136,42 @@ export default {
     }
   },
   methods: {
-    async getBathhouseDetailed () {
+    async getBathhouseDetailed () { // 목욕탕 상세 정보 가져오기
       try {
-        console.log('상세 페이지 ID:', this.bathhouseInfoId)
+        // console.log('상세 페이지 ID:', this.bathhouseInfoId)
+
+        // 목욕탕 상세 정보를 서버에 GET 요청
         const response = await axios.get(`http://localhost:8081/api/bathhouse/${this.bathhouseInfoId}`)
         this.bathhouse = response.data
-        console.log('상세 정보:', this.bathhouse)
+
+        // console.log('상세 정보:', this.bathhouse)
       } catch (error) {
         console.error('목욕탕 정보를 가져오지 못했습니다.: ', error)
       }
     },
-    async fetchReviews () {
+    async fetchReviews () { // 리뷰 가져오기
       try {
-        console.log('현재 bathhouse.id:', this.bathhouse.id)
+        // console.log('현재 bathhouse.id:', this.bathhouse.id)
+
+        // 리뷰를 가져오기 위해 서버에 GET 요청
         const response = await axios.get(`http://localhost:8081/api/reviews/${this.bathhouse.bathhouseInfoId}`)
         this.reviews = response.data
-        console.log('리뷰 응답 데이터:', response.data)
+
+        // console.log('리뷰 응답 데이터:', response.data)
       } catch (error) {
         console.error('리뷰 불러오기 실패', error)
       }
     },
-    async bathhouseLike () {
+    async bathhouseLike () { // 좋아요 처리
       const user = JSON.parse(sessionStorage.getItem('user') || '{}')
+
       if (!user.memberId) {
         alert('로그인이 필요합니다.')
         return
       }
 
       try {
+        // 좋아요 처리를 위해 서버에 POST 요청
         const res = await axios.post('http://localhost:8081/api/bathhouse/like', {
           bathhouseInfoId: this.bathhouseInfoId,
           memberId: user.memberId
@@ -189,13 +180,14 @@ export default {
         this.like = res.data.like
         this.likeCount = res.data.likeCount
 
-        await this.fetchLikeCount()
+        await this.fetchLikeCount() // 좋아요 수 요청
       } catch (e) {
         console.error('좋아요 실패:', e)
       }
     },
-    async fetchLikeCount () {
+    async fetchLikeCount () { // 좋아요 수 요청
       try {
+        // 서버에 GET 요청
         const res = await axios.get(`http://localhost:8081/api/bathhouse/${this.bathhouseInfoId}/like`)
         this.likeCount = res.data.likeCount
       } catch (e) {
@@ -203,21 +195,6 @@ export default {
       }
     }
   }
-  // created () {
-  //   const id = this.$route.params.bathhouseInfoId || this.$route.path.split('/').pop()
-  //   console.log('ID:', id)
-  //   this.getBathhouseDetail(id)
-  // },
-  // methods: {
-  //   async getBathhouseDetail (id) {
-  //     try {
-  //       const response = await axios.get(`http://localhost:8081/bathhouse/${id}`)
-  //       this.bathhouse = response.data
-  //     } catch (error) {
-  //       console.error('목욕탕 정보를 가져오지 못했습니다.: ', error)
-  //     }
-  //   }
-  // }
 }
 </script>
 
@@ -241,15 +218,16 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  backdrop-filter: blur(5px);
-  background-color: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(5px); /* 배경에 블러 효과 */
+  background-color: rgba(255, 255, 255, 0.5); /* 반투명 배경 */
   z-index: 10;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: center; /* 수평 중앙 정렬 */
+  align-items: center; /* 수직 중앙 정렬 */
   border-radius: 10px;
-  pointer-events: none; /* 클릭 막기 원하면 이 줄 제거 */
+  pointer-events: none; /* 이 요소를 클릭할 수 없도록 */
 }
+
 .blurred-text {
   text-align: center;
   font-size: 1.2em;

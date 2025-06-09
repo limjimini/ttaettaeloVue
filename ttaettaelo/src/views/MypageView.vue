@@ -1,14 +1,17 @@
 <template>
   <div class="mypage">
+    <!-- 회원 정보 수정 -->
     <form @submit.prevent="submitForm">
       <h5>마이페이지</h5>
 
-      <div v-if="user">
+      <div v-if="user"> <!-- 로그인인 경우 -->
+        <!-- 아이디 -->
         <div class="mb-4">
           <label>아이디</label>
           <input v-model="user.loginId" type="text" class="form-control" disabled>
         </div>
 
+        <!-- 비밀번호 -->
         <div class="mb-2">
           <label>비밀번호</label>
           <input v-model="user.password" type="password" class="form-control" @input="validatePassword" maxlength="100">
@@ -16,6 +19,7 @@
           <span v-if="formatError" class="text-danger">{{ formatError }}</span>
         </div>
 
+        <!-- 비밀번호 확인 -->
         <div class="mb-4">
           <label>비밀번호 확인</label>
           <input v-model="user.passwordCheck" type="password" class="form-control" @blur="checkPasswordCheck" maxlength="100">
@@ -27,6 +31,7 @@
           </div>
         </div>
 
+        <!-- 이름 -->
         <div class="mb-4">
           <label>이름</label>
           <input v-model="user.name" type="text" class="form-control" @input="validateName" maxlength="6">
@@ -34,6 +39,7 @@
           <span v-if="nameNull" class="text-danger">이름을 입력해주세요.</span>
         </div>
 
+        <!-- 이메일 -->
         <div class="mb-4">
           <label>이메일</label>
           <input v-model="user.email" type="email" class="form-control" @input="checkEmailChange" maxlength="100">
@@ -46,6 +52,7 @@
           <EmailVerification :email="user.email" @verified="handleVerification"/>
         </div>
 
+        <!-- 성별 -->
         <div class="mb-4">
           <label>성별</label>
           <select v-model="user.gender" class="form-control">
@@ -55,6 +62,7 @@
           </select>
         </div>
 
+        <!-- 주소 -->
         <div class="mb-4">
           <label>주소</label>
           <input v-model="user.address" type="text" class="form-control" maxlength="255">
@@ -68,6 +76,7 @@
       </div>
     </form>
 
+    <!-- 내가 좋아요한 목욕탕 목록 -->
     <form>
       <div class=" liked-posts" style="margin-bottom: 20px;">
         <h5>내가 좋아요한 목욕탕</h5>
@@ -83,6 +92,7 @@
         </div>
       </div>
 
+      <!-- 내가 쓴 댓글 목록 -->
       <div class="my-reviews">
         <h5>내가 쓴 댓글</h5>
         <div v-if="myReviews.length === 0">내가 쓴 댓글이 없습니다.</div>
@@ -98,12 +108,13 @@
       </div>
     </form>
 
+    <!-- 회원 탈퇴 버튼 -->
     <form>
       <button type="button" class="btn btn-outline-secondary w-100 deleted" @click="openModal" data-bs-target="#staticBackdrop">회원 탈퇴</button>
     </form>
 
+    <!-- 회원 탈퇴 모달 -->
       <div>
-        <!-- 모달 창 -->
         <div class="modal" id="modal" tabindex="-1">
           <div class="modal-dialog">
             <div class="modal-content">
@@ -140,7 +151,7 @@ import { Modal } from 'bootstrap'
 
 export default {
   components: {
-    EmailVerification
+    EmailVerification // 이메일 컴포넌트
   },
   data () {
     return {
@@ -153,51 +164,39 @@ export default {
         password: '',
         passwordCheck: ''
       },
-      emailChanged: false,
-      isVerified: true,
-      nameNull: false,
-      likedPosts: [],
-      myReviews: [],
-      lengthError: '',
-      formatError: '',
-      passwordCheckError: '',
-      // isModalVisible: false, // 모달의 표시 여부
-      isModalVisible2: false,
-      confirmationText: '',
-      isError: false,
-      deleteConfirmationText: '', // 입력된 텍스트
-      nameLengthError: ''
-      // isFormInvalid: true
+      emailChanged: false, // 이메일 변경 여부
+      isVerified: true, // 이메일 인증 여부
+      nameNull: false, // 이름 데이터 확인
+      likedPosts: [], // 좋아요한 목욕탕 목록
+      myReviews: [], // 내가 쓴 댓글 목록
+      lengthError: '', // 비밀번호 길이 오류 메시지
+      formatError: '', // 비밀번호 형식 오류 메시지
+      passwordCheckError: '', // 비밀번호 확인 오류 메시지
+      isModalVisible: false, // 모달 표시 상태
+      confirmationText: '', // 탈퇴 문구 입력
+      isError: false, // 탈퇴 문구 확인
+      nameLengthError: '' // 이름 길이 오류 확인
     }
   },
   created () {
-    const userData = JSON.parse(sessionStorage.getItem('user'))
+    const userData = JSON.parse(sessionStorage.getItem('user')) // 세션스토리지에서 회원 정보 가져오기
 
-    if (!userData) {
+    if (!userData) { // 로그인 정보가 없으면
       alert('로그인 정보가 없습니다.')
-      this.$router.push('/login')
+      this.$router.push('/login') // 로그인 페이지로
       return
     }
 
-    console.log(userData)
-    console.log('memberId:', userData.memberId)
+    // console.log(userData)
+    // console.log('memberId:', userData.memberId)
+
+    // 회원의 좋아요/댓글 가져오기
     this.user = userData
     this.fetchLikedPosts()
     this.fetchMyReviews()
-
-    // // 세션스토리지에 있는 memberId로 사용자 정보 요청
-    // axios.post('/mypage', { memberId: userData.memberId })
-    //   .then(res => {
-    //     this.user = res.data
-    //     sessionStorage.setItem('user', JSON.stringify(res.data)) // 갱신
-    //   })
-    //   .catch(err => {
-    //     console.error('회원 정보 조회 실패', err)
-    //     alert('정보를 불러오지 못했습니다.')
-    //   })
   },
   computed: {
-    canChangePassword () {
+    canChangePassword () { // 비밀번호 변경
       return (
         this.user &&
         this.user.password &&
@@ -209,20 +208,19 @@ export default {
     }
   },
   watch: {
-    // 사용자 정보 변경 시 폼 유효성 체크 (예시)
-    'user.name': function (newName) {
+    // 사용자 정보 변경 유효성 체크
+    'user.name': function () {
       this.validateForm()
     },
-    'user.email': function (newEmail) {
+    'user.email': function () {
       this.validateForm()
     },
-    'user.gender': function (newGender) {
+    'user.gender': function () {
       this.validateForm()
     }
   },
   methods: {
-    // 이메일 수정이 있을 때 이메일 인증을 요구
-    validateName () {
+    validateName () { // 이름 유효성 검사사
       this.nameNull = false
 
       if (this.user.name.length > 6) {
@@ -234,8 +232,9 @@ export default {
         this.nameLengthError = false
       }
     },
-    checkEmailChange () {
+    checkEmailChange () { // 이메일 변경
       const originalEmail = JSON.parse(sessionStorage.getItem('user')).email
+
       if (this.user.email !== originalEmail) {
         this.emailChanged = true
         this.isVerified = false // 이메일이 변경되었으므로 인증이 안 된 상태로 설정
@@ -244,20 +243,20 @@ export default {
         this.isVerified = true // 이메일 인증이 필요 없으므로 기본 true
       }
     },
-    handleEmailVerification (isVerified) {
+    handleEmailVerification (isVerified) { // 이메일 인증 처리
       this.isVerified = isVerified
       if (isVerified) {
         alert('이메일 인증이 완료되었습니다!')
       }
     },
-    openPostcode () {
+    openPostcode () { // 다음 주소 찾기 서비스
       new window.daum.Postcode({
         oncomplete: (data) => {
           this.user.address = data.address
         }
       }).open()
     },
-    async submitForm () {
+    async submitForm () { // 폼 제출 처리
       if (!this.isVerified) {
         alert('이메일 인증이 필요합니다!')
         return
@@ -277,33 +276,7 @@ export default {
         return
       }
 
-      // if (!this.isFormInvalid) {
-      //   alert('비밀번호 또는 비밀번호 확인이 유효하지 않습니다.')
-      //   return
-      // }
-
-      // // 비밀번호 변경하면
-      // const updatedUser = {
-      //   memberId: this.user.memberId, // 예시로 추가한 memberId, 실제로 필요한 필드 추가
-      //   loginId: this.user.loginId,
-      //   name: this.user.name,
-      //   email: this.user.email,
-      //   gender: this.user.gender,
-      //   address: this.user.address,
-      //   password: this.user.password || null, // 비밀번호가 입력되었으면 업데이트
-      //   passwordCheck: this.user.passwordCheck || null // 비밀번호 확인
-      // }
-
-      // 요청을 보내기 전에 데이터가 정상인지 로그로 확인
-      // console.log('업데이트할 데이터:', {
-      //   memberId: this.user.memberId,
-      //   name: this.user.name,
-      //   email: this.user.email,
-      //   gender: this.user.gender,
-      //   address: this.user.address
-      // })
-
-      try {
+      try { // 회원 정보 변경
         const response = await axios.put('/api/changeMember', {
           memberId: this.user.memberId,
           loginId: this.user.loginId,
@@ -320,7 +293,7 @@ export default {
           const { password, passwordCheck, passwordChecked, ...userWithoutPassword } = response.data.user
           sessionStorage.setItem('user', JSON.stringify(userWithoutPassword)) // 비밀번호 제외
 
-          this.$router.push({ name: 'Home' })
+          this.$router.push({ name: 'Home' }) // 홈 화면으로
         } else {
           alert('정보 업데이트에 실패했습니다.')
         }
@@ -329,15 +302,15 @@ export default {
         alert('서버와의 연결에 문제가 발생했습니다.')
       }
     },
-    handleVerification () {
+    handleVerification () { // 이메일 인증 성공 처리
       this.isVerified = true
       this.validateForm()
     },
-    validateForm () {
+    validateForm () { // 폼 유효성 체크
       // 빈 값
       this.isFormValid = this.user.name && !this.nameNull && this.user.email && this.user.gender && this.isVerified
     },
-    async fetchLikedPosts () {
+    async fetchLikedPosts () { // 내가 좋아요한 목욕탕 목록 가져오기
       try {
         const response = await axios.get('/api/likedBathhouse', {
           params: {
@@ -349,7 +322,7 @@ export default {
         console.error('좋아요한 게시글을 불러오지 못했습니다.', error)
       }
     },
-    async fetchMyReviews () {
+    async fetchMyReviews () { // 내가 쓴 리뷰 가져오기
       try {
         const response = await axios.get('/api/myReviews', {
           params: {
@@ -361,34 +334,28 @@ export default {
         console.error('내가 쓴 댓글을 불러오지 못했습니다.', error)
       }
     },
-    validatePassword () {
-      if (this.user.password.length < 8 || this.user.password.length > 20) {
+    validatePassword () { // 비밀번호 유효성 체크
+      if (this.user.password.length < 8 || this.user.password.length > 20) { // 길이
         this.lengthError = '비밀번호는 8~20자로 입력해주세요.'
       } else {
         this.lengthError = ''
       }
 
       const passwordPattern = /^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\W)(?=\S+$).+$/
-      if (!passwordPattern.test(this.user.password)) {
+      if (!passwordPattern.test(this.user.password)) { // 패턴
         this.formatError = '비밀번호는 영문대소문자, 숫자, 특수문자를 사용해주세요.'
       } else {
         this.formatError = ''
       }
-
-      // this.checkFormValidity()
     },
-    checkPasswordCheck () {
+    checkPasswordCheck () { // 비밀번호 확인 체크
       if (this.user.password !== this.user.passwordCheck) {
         this.passwordCheckError = '비밀번호가 일치하지 않습니다.'
       } else {
         this.passwordCheckError = ''
       }
-
-      // this.checkFormValidity()
-
-      // this.checkPasswordChangeConditions()
     },
-    async changePassword () {
+    async changePassword () { // 비밀번호 변경
       try {
         const response = await axios.put('/api/changePassword', {
           loginId: this.user.loginId,
@@ -407,34 +374,7 @@ export default {
         alert('서버 오류로 비밀번호 변경에 실패했습니다.')
       }
     },
-    // checkFormValidity () {
-    //   // 비밀번호, 비밀번호 확인, Validation 상태를 모두 체크
-    //   if (
-    //     (this.user.password && !this.user.passwordCheck) ||
-    //     (!this.user.password && this.user.passwordCheck) ||
-    //     this.user.password !== this.user.passwordCheck ||
-    //     this.lengthError ||
-    //     this.formatError
-    //   ) {
-    //     this.isFormInvalid = false // 조건에 맞으면 버튼 비활성화
-    //   } else {
-    //     this.isFormInvalid = true // 유효하면 버튼 활성화
-    //   }
-    // }
-    // openDeleteAccountModal () {
-    //   console.log('모달을 여는 중')
-    //   this.isModalVisible = true
-    // },
-    // closeModal () {
-    //   this.isModalVisible = false
-    //   this.deleteConfirmationText = ''
-    // },
-    // confirmDelete () {
-    //   if (this.deleteConfirmationText === '정말 탈퇴하시겠습니까?') {
-    //     this.deleteAccount()
-    //   }
-    // },
-    async deleteAccount () {
+    async deleteAccount () { //  회원 탈퇴
       try {
         const response = await axios.post('/api/deleteAccount', {
           memberId: this.user.memberId
@@ -442,10 +382,8 @@ export default {
 
         if (response.data.success) {
           alert(`${this.user.name}님의 계정이 탈퇴되었습니다.`)
-          this.$store.dispatch('logout')
+          this.$store.dispatch('logout') // 로그아웃
           this.$router.push({ name: 'Home' }) // 홈 화면으로
-          // 세션 스토리지에서 정보 제거
-          // sessionStorage.removeItem('user')
           this.closeModal()
         } else {
           alert('탈퇴 처리 중 오류가 발생했습니다.')
@@ -455,27 +393,25 @@ export default {
         alert('서버 오류로 탈퇴를 처리할 수 없습니다.')
       }
     },
-    openModal () {
-      // this.isModalVisible2 = true
+    openModal () { // 모달 열기
       const modalElement = document.getElementById('modal')
       const modal = new Modal(modalElement)
       modal.show()
     },
-    closeModal () {
+    closeModal () { // 모달 닫기
       const modalElement = document.getElementById('modal')
-      const modal = Modal.getInstance(modalElement) // 이미 열린 모달 인스턴스를 가져옵니다.
+      const modal = Modal.getInstance(modalElement) // 이미 열린 모달 인스턴스 가져오기
       modal.hide()
 
-      this.isModalVisible2 = false
+      this.isModalVisible = false
       this.isError = false
       this.confirmationText = ''
     },
-    confirmDeletion () {
+    confirmDeletion () { // 탈퇴 문구 확인
       const expectedText = `${this.user.name} 탈퇴합니다.`
       if (this.confirmationText === expectedText) {
         alert('탈퇴가 확인되었습니다.')
-        this.deleteAccount()
-        // this.closeModal()
+        this.deleteAccount() // 회원 탈퇴
       } else {
         this.isError = true
       }
@@ -489,10 +425,10 @@ export default {
   padding: 40px;
   background-color: #F6F4EB;
   display: flex;
-  justify-content: center; /* 가로 중앙 */
-  align-items: center;
+  justify-content: center; /* 가로 중앙 정렬 */
+  align-items: center; /* 세로 중앙 정렬 */
   justify-content: center;
-  flex-direction: column;
+  flex-direction: column; /* 세로 방향으로 배치 */
 }
 
 form {
@@ -507,32 +443,27 @@ form {
 }
 
 .form-control {
-  height: 40px;
+  height: 40px; /* 입력창 높이 같게 */
 }
-
-.form-control:focus {
+.form-control:focus { /* 입력창 눌렀을 때 */
   outline: none;
   box-shadow: none;
   transform: none;
   border: 2px solid #4682A9;
 }
 
-.btn-danger {
-  background-color: #dc3545;
-  color: white;
-}
-
 .modal-overlay {
-  position: fixed;
+  position: fixed; /* 전체 화면 고정 */
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.5);
   display: flex;
-  justify-content: center;
+  justify-content: center; /* 모달 중앙 정렬 */
   align-items: center;
 }
+
 .modal-content {
   background: white;
   padding: 20px;
@@ -547,8 +478,8 @@ form {
   border-color: #4682A9;
   color: white;
 }
-.btn:hover {
-  background-color: #91C8E4; /* 마우스 올렸을 때 색상 */
+.btn:hover { /* 마우스 올렸을 때 */
+  background-color: #91C8E4;
   border-color: #91C8E4;
 }
 
@@ -560,7 +491,7 @@ input {
   border-radius: 5px;
   }
 
-.error-message {
+.error-message { /* 오류 메시지 */
   color: #dc3545;
   margin-bottom: 20px;
   text-align: center;

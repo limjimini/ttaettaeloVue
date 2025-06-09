@@ -1,23 +1,28 @@
-<!-- eslint-disable vue/no-dupe-keys -->
 <template>
-  <header id="nav">
+  <header>
     <div class="sign-container">
+      <!-- 로그인이 되어 있지 않다면 -->
       <router-link v-if="!isLoggedIn" to="/signUp" class="text-white">회원가입</router-link>
       <router-link v-if="!isLoggedIn" to="/login" class="text-white">로그인</router-link>
+      <!-- 로그인이 되어 있다면 -->
       <router-link v-if="isLoggedIn" to="/mypage" class="text-white" @click="goToPage">마이페이지</router-link>
       <router-link v-if="isLoggedIn" to="/home" class="text-white" @click.prevent="logout">로그아웃</router-link>
     </div>
 
+    <!-- 내비게이션 바 -->
     <nav class="navbar navbar-expand-lg">
       <div class="container-fluid">
+        <!-- 로고 -->
         <a class="navbar-brand" href="/">
             <span style="color: #43C344;">때</span>
             <span style="color: #FEDE4F;">때</span>
             <span style="color: #F682B3;">로</span>
         </a>
+
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu" aria-controls="navbarMenu" aria-expanded="false" aria-label="Toggle">
           <span class="navbar-toggler-icon"></span>
         </button>
+
         <div class="collapse navbar-collapse" id="navbarMenu">
           <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
             <li class="nav-item dropdown hover-dropdown" ref="dropdown">
@@ -60,51 +65,48 @@ import axios from 'axios'
 export default {
   data () {
     return {
-      user: null
-    }
-  },
-  computed: {
-    isLoggedIn () {
-      return this.$store.getters.isLoggedIn
-    },
-    // eslint-disable-next-line vue/no-dupe-keys
-    currentUser () {
-      return this.$store.getters.getUser
+      user: null // 회원 정보
     }
   },
   mounted () {
-    // 페이지 로드 시 세션 스토리지에서 로그인 상태 체크
+    // 페이지 로드 시 세션스토리지에서 로그인 상태 확인
     const storedUser = sessionStorage.getItem('user')
     if (storedUser) {
-      this.user = JSON.parse(storedUser) // 로그인된 사용자 정보 가져오기
+      this.user = JSON.parse(storedUser) // 로그인된 사용자 정보 저장
+    }
+  },
+  computed: {
+    isLoggedIn () { // 로그인 상태 확인
+      return this.$store.getters.isLoggedIn
+    },
+    currentUser () { // 현재 회원 정보 가져오기
+      return this.$store.getters.getUser
     }
   },
   methods: {
-    setDropdownWidth () {
-      const dropdownLink = this.$refs.dropdownLink
-      const dropdownMenu = this.$refs.item
+    setDropdownWidth () { // 드롭다운 메뉴 부모 메뉴의 너비와 일치
+      const dropdownLink = this.$refs.dropdownLink // 드롭다운 링크
+      const dropdownMenu = this.$refs.item // 드롭다운 메뉴
 
-      if (dropdownLink && dropdownMenu) {
-        // 부모 메뉴 (목욕탕 가이드)의 너비를 가져와서 서브 메뉴에 적용
+      if (dropdownLink && dropdownMenu) { // 부모 메뉴 너비를 서브 메뉴에 적용
         const width = dropdownLink.offsetWidth
         dropdownMenu.style.width = `${width}px`
       }
     },
-    // 로그아웃 요청 함수
-    async logout () {
+    async logout () { // 로그아웃
       try {
         // 로그아웃 요청을 서버에 보냄
         await axios.post('http://localhost:8081/api/logout', {}, { maxRedirects: 0 })
 
-        this.$store.dispatch('logout')
-        this.$router.push({ name: 'Home' })
+        this.$store.dispatch('logout') // 로그아웃 처리
+        this.$router.push({ name: 'Login' }) // 로그인 페이지로
       } catch (error) {
         console.error('로그아웃 요청 오류', error)
       }
     },
     goToPage () {
       if (this.$route.path === '/mypage') {
-        this.$router.go(0)
+        this.$router.go(0) // 새로고침
       }
     }
   }
@@ -112,27 +114,25 @@ export default {
 </script>
 
 <style scoped>
-header {
+header { /* 전체 header 배경색 */
   background-color: #4682a9;
 }
 
-.navbar-brand {
+.navbar-brand { /* 로고 */
   font-size: 30px;
   font-weight: 800;
   margin: 0 0 0 16px;
 }
 
-.hover-dropdown:hover > .dropdown-menu {
+.hover-dropdown:hover > .dropdown-menu { /* 마우스 올리면 드롭다운 표시 */
   display: block;
   margin-top: 0;
 }
-
 .hover-dropdown .dropdown-menu {
   display: none;
   transition: all 0.2s ease;
   margin-top: 0;
 }
-
 .dropdown-menu {
   display: none;
   position: absolute;
@@ -151,7 +151,6 @@ header {
   padding: 8px 10px;
   font-size: 18px;
 }
-
 .dropdown-item:hover {
   background-color: #91c8e4;
   font-weight: bold;
@@ -164,7 +163,6 @@ header {
   padding: 10px 20px 0 0;
   font-size: 15px;
 }
-
 .sign-container .text-white {
   text-decoration: none;
 }
@@ -173,7 +171,6 @@ header {
   margin: 0 15px;
   font-size: 20px;
 }
-
 .nav-link:hover {
   color: #f6f4eb;
   font-weight: bold;

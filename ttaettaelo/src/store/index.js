@@ -24,16 +24,14 @@ export default createStore({
     }
   },
   actions: {
-    // 로그인 액션 (API로 로그인했다는 가정)
+    // 로그인
     login ({ commit }, userData) {
       commit('setUser', userData)
     },
+    // 로그아웃웃
     logout ({ commit }) {
       commit('clearUser')
-
       sessionStorage.removeItem('user')
     }
-  },
-  modules: {
   }
 })
