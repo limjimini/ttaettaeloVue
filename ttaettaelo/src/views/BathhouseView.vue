@@ -24,6 +24,15 @@
               <p>리뷰 수: {{ bathhouse.reviewCount }}</p>
               <p>평점: {{ bathhouse.avgRating }}</p>
               <p>좋아요 수: {{ bathhouse.likeCount }}</p>
+              <div v-if="bathhouse.tagKeyword && bathhouse.tagKeyword.length" class="tags mt-3">
+                <span
+                  v-for="tag in bathhouse.tagKeyword"
+                  :key="tag.tagName"
+                  class="badge bg-secondary me-1 badge-tag"
+                >
+                  #{{ tag.tagName }}
+                </span>
+              </div>
             </div>
           </div>
         </router-link>
@@ -101,11 +110,14 @@ export default {
     }
   },
   watch: {
-    bathhouses (newVal) {
-      // 검색어가 있다면 다시 검색 실행
-      if (this.$route.query.keyword && newVal.length > 0) {
-        this.searchKeyword = this.$route.query.keyword
-        this.search() // 검색
+    '$route.query.keyword' (keyword) {
+      if (keyword) { // URL에 keyword가 있을 때
+        this.searchKeyword = keyword
+        this.search() // 검색 실행
+      } else { // URL에서 keyword가 없을 때
+        this.searchKeyword = '' // 검색어 초기화
+        this.filteredBathhouses = this.bathhouses // 목욕탕 초기화
+        this.currentPage = 1 // 1 페이지로
       }
     }
   },
@@ -116,27 +128,46 @@ export default {
         const response = await axios.get('http://localhost:8081/api/bathhouse')
         this.bathhouses = response.data
         this.filteredBathhouses = this.bathhouses // 초기화
+
+        if (this.searchKeyword) { // URL에 keyword가 있으면
+          this.search()
+        }
       } catch (error) {
         console.error('목욕탕 정보를 가져오지 못했습니다.: ', error)
       }
     },
-    handlePageChange (pageNumber) { // 페이지 변경
-      if (pageNumber >= 1 && pageNumber <= this.totalPages) {
-        this.currentPage = pageNumber
+
+    search () {
+      const keyword = this.searchKeyword.trim().toLowerCase()
+
+      // URL에 keyword를 쿼리 파라미터로 추가
+      if (keyword) { // 검색어가 있는 경우
+        this.$router.push({
+          path: this.$route.path,
+          query: { ...this.$route.query, keyword: this.searchKeyword }
+        })
+      } else { // 검색어가 없는 경우
+        const { keyword, ...query } = this.$route.query
+        this.$router.push({ path: this.$route.path, query }) // keyword 파라미터 제거
       }
-    },
-    search () { // 검색
-      const keyword = this.searchKeyword.toLowerCase() // 검색어 저장
+
+      // 검색어에 맞춰 필터링된 목록을 업데이트
       this.filteredBathhouses = this.bathhouses.filter(bathhouse => {
         return (
           bathhouse.name?.toLowerCase().includes(keyword) || // 이름
           bathhouse.location?.toLowerCase().includes(keyword) || // 위치
           bathhouse.type?.toLowerCase().includes(keyword) || // 타입
           (bathhouse.tagKeyword &&
-            bathhouse.tagKeyword.some(tag => tag.tagName.toLowerCase().includes(keyword))) // 키워드
+            bathhouse.tagKeyword.some(tag => tag.tagName.toLowerCase().includes(keyword))) // 태그
         )
       })
+
       this.currentPage = 1 // 첫 페이지로
+    },
+    handlePageChange (pageNumber) { // 페이지 변경
+      if (pageNumber >= 1 && pageNumber <= this.totalPages) {
+        this.currentPage = pageNumber
+      }
     }
   }
 }
