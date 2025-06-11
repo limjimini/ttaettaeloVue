@@ -167,6 +167,8 @@ export default {
     handlePageChange (pageNumber) { // 페이지 변경
       if (pageNumber >= 1 && pageNumber <= this.totalPages) {
         this.currentPage = pageNumber
+
+        document.activeElement.blur() // 포커스가 있는 요소 반환
       }
     }
   }
@@ -232,6 +234,11 @@ export default {
 
 .page-link {
   color: #4682A9;
+}
+.page-link:focus {
+  outline: none;
+  box-shadow: none;
+  transform: none;
 }
 
 .search-input {
