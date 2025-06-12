@@ -46,19 +46,31 @@
         <!-- 페이지네이션 -->
         <nav aria-label="Page navigation page-support" class="mt-4">
         <ul class="pagination justify-content-center">
-          <!-- 이전 버튼 -->
+          <!-- 제일 처음으로 가는 버튼 -->
           <li class="page-item" :class="{'disabled': currentPage === 1}">
-            <a class="page-link" href="#" @click="changePage(currentPage - 1)" aria-label="Previous">
+            <a class="page-link" href="#" @click="changePage(1)" aria-label="Previous">
               <span aria-hidden="true">&laquo;</span>
             </a>
           </li>
+          <!-- 이전 버튼 -->
+          <li class="page-item" :class="{'disabled': currentPage === 1}">
+            <a class="page-link" href="#" @click="changePage(currentPage - 1)" aria-label="Previous">
+              <span aria-hidden="true">&lt;</span>
+            </a>
+          </li>
           <!-- 페이지 번호 버튼 -->
-          <li class="page-item" v-for="page in totalPages" :key="page" :class="{'active': currentPage === page}">
+          <li class="page-item" v-for="page in pageNumbers" :key="page" :class="{'active': currentPage === page}">
             <a class="page-link" href="#" @click="changePage(page)">{{ page }}</a>
           </li>
           <!-- 다음 버튼 -->
           <li class="page-item" :class="{'disabled': currentPage === totalPages}">
             <a class="page-link" href="#" @click="changePage(currentPage + 1)" aria-label="Next">
+              <span aria-hidden="true">&gt;</span>
+            </a>
+          </li>
+          <!-- 제일 뒤로 가는 버튼 -->
+          <li class="page-item" :class="{'disabled': currentPage === totalPages}">
+            <a class="page-link" href="#" @click="changePage(totalPages)" aria-label="Next">
               <span aria-hidden="true">&raquo;</span>
             </a>
           </li>
@@ -72,7 +84,7 @@
 <script setup>
 import axios from 'axios'
 // import { useStore } from 'vuex'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 
 // const store = useStore() // Vuex store 가져오기
 // const user = computed(() => store.getters.getUser) // 로그인된 사용자 정보
@@ -110,6 +122,16 @@ const changePage = (page) => { // 해당 페이지에 대한 문의글 가져오
     document.activeElement.blur() // 포커스가 있는 요소 반환
   }
 }
+
+const pageNumbers = computed(() => { // 페이지 번호는 5개씩
+  const maxPage = 5 // 보여줄 페이지 번호 버튼 수
+  const endPage = Math.ceil(currentPage.value / maxPage) * maxPage // 끝 페이지
+  const startPage = endPage - (maxPage - 1) // 시작 페이지
+
+  // 페이지 번호 생성
+  return Array.from({ length: endPage - startPage + 1 }, (_, i) => i + startPage)
+    .filter(page => page <= totalPages.value)
+})
 
 onMounted(() => {
   fetchSupports(currentPage.value, pageSize)

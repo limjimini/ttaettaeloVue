@@ -42,19 +42,31 @@
     <!-- 페이지네이션 -->
     <nav aria-label="Page navigation">
       <ul class="pagination justify-content-center" id="bathhousePage">
-        <!-- 이전 페이지 버튼 -->
-        <li class="page-item" :class="{ disabled: currentPage === 1 }">
-          <a class="page-link" href="javascript:void(0);" @click="handlePageChange(currentPage - 1)" aria-label="Previous">
+        <!-- 제일 처음으로 가는 페이지 버튼 -->
+        <li class="page-item" :class="{ 'disabled': currentPage === 1 }">
+          <a class="page-link" href="javascript:void(0);" @click="handlePageChange(1)" aria-label="Previous">
           <span aria-hidden="true">&laquo;</span>
           </a>
         </li>
+        <!-- 이전 페이지 버튼 -->
+        <li class="page-item" :class="{ 'disabled': currentPage === 1 }">
+          <a class="page-link" href="javascript:void(0);" @click="handlePageChange(currentPage - 1)" aria-label="Previous">
+          <span aria-hidden="true">&lt;</span>
+          </a>
+        </li>
         <!-- 페이지 번호 버튼 -->
-        <li v-for="page in pageNumbers" :key="page" :class="{ active: currentPage === page }" class="page-item">
+        <li v-for="page in pageNumbers" :key="page" :class="{ 'active': currentPage === page }" class="page-item">
           <a class="page-link" href="javascript:void(0);" @click="handlePageChange(page)">{{ page }}</a>
         </li>
         <!-- 다음 페이지 버튼 -->
-        <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+        <li class="page-item" :class="{ 'disabled': currentPage === totalPages }">
           <a class="page-link" href="javascript:void(0);" @click="handlePageChange(currentPage + 1)" aria-label="Next">
+          <span aria-hidden="true">&gt;</span>
+          </a>
+        </li>
+        <!-- 제일 끝페이지로 가는 버튼 -->
+        <li class="page-item" :class="{ 'disabled': currentPage === totalPages }">
+          <a class="page-link" href="javascript:void(0);" @click="handlePageChange(totalPages)" aria-label="Next">
           <span aria-hidden="true">&raquo;</span>
           </a>
         </li>
