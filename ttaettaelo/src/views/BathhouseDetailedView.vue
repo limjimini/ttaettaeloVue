@@ -6,14 +6,11 @@
           <!-- 이미지 -->
           <div class="col-md-5">
             <img
-              v-if="bathhouse.imgUrl"
-              :src="bathhouse.imgUrl"
+              :src="bathhouse.imgUrl || require('@/assets/ttaettaelo.png')"
               class="img-fluid rounded-start w-100 h-100 object-fit-cover"
               alt="목욕탕 이미지"
-              @error="$event.target.src=require('@/assets/ttaettaelo.png')"
             />
           </div>
-
           <!-- 상세 정보 -->
           <div class="col-md-7">
             <div class="card-body">
@@ -203,7 +200,7 @@ export default {
   background-color: #f6f4eb;
 }
 
-.bathhouse-detail img {
+img {
   object-fit: cover;
   height: 100%;
 }
