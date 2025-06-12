@@ -17,7 +17,10 @@
             <div class="accordion-item">
               <!-- 문의하기 제목과 문의 상태 -->
               <h5 class="accordion-header">
-                <button @click="toggle(support.supportId)" class="accordion-button" type="button" aria-expanded="true" :aria-controls="'collapse-' + support.supportId">
+                <button @click="toggle(support.supportId, support.memberId)" class="accordion-button" type="button" aria-expanded="true" :aria-controls="'collapse-' + support.supportId">
+                  <span class="me-1">
+                    <i :class="support.memberId === memberId ? 'bi bi-unlock-fill' : 'bi bi-lock-fill'"></i>
+                  </span>
                   {{ support.title }}
                   <span class="ms-auto badge" :class="support.status === '답변 완료' ? 'text-bg-success' : 'text-bg-secondary'">
                     {{ support.status }}
@@ -83,7 +86,7 @@
 
 <script setup>
 import axios from 'axios'
-// import { useStore } from 'vuex'
+import { useStore } from 'vuex'
 import { ref, onMounted, computed } from 'vue'
 
 // const store = useStore() // Vuex store 가져오기
@@ -94,13 +97,21 @@ import { ref, onMounted, computed } from 'vue'
 // console.log(userId.value)
 
 const supportList = ref([]) // 문의하기 목록을 저장할 변수
-const openId = ref(null) // 로그인된 로그인 아이디를 저장할 변수
+const openId = ref(null) // 열리는 문의글의 번호
 const currentPage = ref(1) // 현재 페이지
 const totalPages = ref(1) // 전체 페이지 수
 const pageSize = 5 // 한 페이지에 나타낼 문의글 수
 
-const toggle = (id) => { // 문의글 열고 닫기
-  openId.value = openId.value === id ? null : id
+const store = useStore() // Vuex store 가져오기
+const memberId = computed(() => store.state.user.memberId)
+
+const toggle = (supportId, userId) => { // 문의글 열고 닫기
+  if (userId !== memberId.value) {
+    alert('회원님의 문의가 아닙니다.')
+    return
+  }
+
+  openId.value = openId.value === supportId ? null : supportId // 문의글 열고 닫기
 }
 
 const fetchSupports = async (page = 1) => { // 문의글 리스트 가져오기
